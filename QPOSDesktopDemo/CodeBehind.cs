@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -947,6 +947,8 @@ namespace QPOSDesktopDemo
                     String pinKsn = decodeData["pinKsn"];
                     String trackksn = decodeData["trackksn"];
                     String pinBlock = decodeData["pinBlock"];
+                    String C9 = decodeData["newPin"];
+                    String hashPan = decodeData["hashPan"];
 
                     content = " card_swiped ";
 
@@ -967,6 +969,8 @@ namespace QPOSDesktopDemo
                     content += " encrypted_track_3 " + " " + encTrack3 + "\n";
                     content += " partial_track " + " " + partialTrack + "\n";
                     content += " pinBlock " + " " + pinBlock + "\n";
+                    content += " C9: " + " " + C9 + "\n";
+                    content += " hashPan " + " " + hashPan + "\n";
 
                 }
 
@@ -1477,6 +1481,11 @@ namespace QPOSDesktopDemo
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
 
+            }
+
+            public void onReturnSetBuzzerStatus(bool isSuccess)
+            {
+               
             }
         }
         #endregion

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -728,7 +728,7 @@ namespace QPOSDesktopDemo
 
             public void onRequestSetAmount()
             {
-                amount = "123";
+                amount = "12300";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
                 pos.setAmount(amount, cashbackAmount, "384", transactionType);
@@ -1155,7 +1155,8 @@ namespace QPOSDesktopDemo
 
                 //Tip.d("online result :\n" + "maskedPAN=" + maskedPAN + "\n"+"macBlock ="+ MacBlock+"\n"+"expiryDate=" + expiryDate + "\n" + "encTracks=" + encTracks);
 
-
+                Dictionary<String, String> tlvData=pos.getICCTag(0,1,"9F33");
+                Console.Write("9F33" + tlvData);
 
                 pos.sendOnlineProcessResult("8A023030");
                 /*

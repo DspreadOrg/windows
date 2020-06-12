@@ -1,0 +1,115 @@
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojResolveAssemblyReference.cache
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\App.g.cs
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.Cache
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.dll
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\Windows.winmd
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+c:\users\sheng - dspread\documents\visual studio 2015\Projects\QPOSDesktopDemo\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.dll
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\Windows.winmd
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojResolveAssemblyReference.cache
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\App.g.cs
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+C:\Users\Sheng - DSpread\Source\Repos\dspread\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.Cache
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.dll
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojAssemblyReference.cache
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\App.g.cs
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.cache
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CoreCompileInputs.cache
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CopyComplete
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+C:\Users\duanj\Desktop\bak\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojAssemblyReference.cache
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\App.g.cs
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.cache
+D:\DH_POS\possdk\C#\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CopyComplete
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\App.g.cs
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.cache
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CopyComplete
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe.config
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.exe
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopDemo.pdb
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.dll
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\CryptoGraphy.dll
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojAssemblyReference.cache
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.g.cs
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\App.g.cs
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.cache
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo_MarkupCompile.lref
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\MainWindow.baml
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.g.resources
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.Properties.Resources.resources
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.GenerateResource.cache
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CopyComplete
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
+D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojAssemblyReference.cache

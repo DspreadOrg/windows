@@ -1269,7 +1269,7 @@ namespace QPOSDesktopDemo
                 else if (result == QPOSService.DoTradeResult.MCR)
                 {
                     String formatID = decodeData["formatID"];
-                    if (formatID.Equals("30") || formatID.Equals("38"))
+                    if (formatID.Equals("30") || formatID.Equals("38") || formatID.Equals("57"))
                     {
                         String maskedPAN = decodeData["maskedPAN"];
                         String expiryDate = decodeData["expiryDate"];

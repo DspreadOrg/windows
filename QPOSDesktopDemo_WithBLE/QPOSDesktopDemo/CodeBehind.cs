@@ -539,6 +539,7 @@ namespace QPOSDesktopDemo
                         {
                             // Used to filter out virtualised USB port so only one USB connection will be enumerated.
                             var usbFilterStr = deviceInformation.Id.Substring(8, 23);
+                           Console.WriteLine("deviceInformation.Id="+ deviceInformation.Id);
                             if (usbFilterStr.Substring(usbFilterStr.Length - 2, 2) == "00")
                             {
                                 NotifyUser("USB Device added - Device Name: " + deviceInformation.Name, NotifyType.StatusMessage);
@@ -1536,6 +1537,7 @@ namespace QPOSDesktopDemo
                 Console.WriteLine("57=" + hashtable["tlv"] + "\r\n");
 
                 pos.sendOnlineProcessResult("8A023030");
+                //pos.sendOnlineProcessResult("8A025A33");
                 /*
                 if (MessageBox.Show("Request is Online process!", "callback tips", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                 {

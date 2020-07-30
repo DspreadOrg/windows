@@ -1071,7 +1071,7 @@ namespace QPOSDesktopDemo
                 amount = "123";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
-                pos.setAmount(amount, cashbackAmount, "384", transactionType);
+                pos.setAmount(amount, cashbackAmount, "840", transactionType);
             }
 
             async public void onError(QPOSService.Error errorState)
@@ -1178,7 +1178,7 @@ namespace QPOSDesktopDemo
                 }
                 else if (displayMsg == QPOSService.Display.TRY_ANOTHER_INTERFACE)
                 {
-                    msg = "try_another_interface";
+                    msg = "Tap Prohibit,please insert or swipe";
                 }
                 else if (displayMsg == QPOSService.Display.PROCESSING)
                 {
@@ -1203,6 +1203,14 @@ namespace QPOSDesktopDemo
                 else if (displayMsg == QPOSService.Display.MAG_TO_ICC_TRADE)
                 {
                     msg = "magstripe card to icc card";
+                }
+                else if (displayMsg == QPOSService.Display.SELECT_APP_TIMEOUT)
+                {
+                    msg = "select app timeout,emv transaction terminated";
+                }
+                else if (displayMsg == QPOSService.Display.SELECT_APP_CANCEL)
+                {
+                    msg = "select app cancel,emv transaction terminated";
                 }
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
@@ -1315,9 +1323,9 @@ namespace QPOSDesktopDemo
                         String maskedPAN = decodeData["maskedPAN"];
                         String expiryDate = decodeData["expiryDate"];
                         String cardHolderName = decodeData["cardholderName"];
-                       
+
                         String serviceCode = decodeData["serviceCode"];
-                     
+
                         String trackblock = decodeData["trackblock"];
                         String psamId = decodeData["psamId"];
                         //TODO 
@@ -1333,16 +1341,16 @@ namespace QPOSDesktopDemo
                         content += " expiry_date " + " " + expiryDate + "\n";
                         content += " cardholder_name " + " " + cardHolderName + "\n";
                         content += " service_code " + " " + serviceCode + "\n";
-           
+
                         content += " trackblock " + " " + trackblock + "\n";
                         content += " psamId " + " " + psamId + "\n";
                         content += " posId " + " " + posId + "\n";
                         content += " macblock " + " " + macblock + "\n";
                         content += " pinblock " + " " + pinblock + "\n";
                         content += " activateCode " + " " + activateCode + "\n";
-                        
+
                     }
-                    
+
                     //pos.getPin(9,0,6,"PLS Input Pin:", maskedPAN,"",60);
 
                 }
@@ -1435,6 +1443,10 @@ namespace QPOSDesktopDemo
                 else if (result == QPOSService.DoTradeResult.NO_UPDATE_WORK_KEY)
                 {
                     content = "device no update work key!";
+                }
+                else if (result == QPOSService.DoTradeResult.TRY_ANOTHER_INTERFACE)
+                {
+                    content = "please insert or swipe";
                 }
 
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
@@ -1532,10 +1544,9 @@ namespace QPOSDesktopDemo
 
                 Dictionary<String, String> hashtable = new Dictionary<String, String>();
                 //pos.selectEmvApp(0);
-                hashtable = pos.getICCTag(0, 1, "57");
-
-                Console.WriteLine("57=" + hashtable["tlv"] + "\r\n");
-
+                hashtable = pos.getICCTag(0, 1, "9F33");
+                
+                Console.WriteLine("9F33=" + hashtable["tlv"] + "\r\n");
                 pos.sendOnlineProcessResult("8A023030");
                 //pos.sendOnlineProcessResult("8A025A33");
                 /*
@@ -1614,6 +1625,14 @@ namespace QPOSDesktopDemo
                 else if (transactionResult == QPOSService.TransactionResult.SELECT_APP_FAIL)
                 {
                     message = ("transaction_app_fail");
+                }
+                else if (transactionResult == QPOSService.TransactionResult.SELECT_APP_TIMEOUT)
+                {
+                    message = ("transaction_select_timeout");
+                }
+                else if (transactionResult == QPOSService.TransactionResult.SELECT_APP_CANCEL)
+                {
+                    message = ("transaction_select_cancel");
                 }
                 else if (transactionResult == QPOSService.TransactionResult.DEVICE_ERROR)
                 {

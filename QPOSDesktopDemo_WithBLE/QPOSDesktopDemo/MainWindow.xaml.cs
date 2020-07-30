@@ -188,6 +188,7 @@ namespace QPOSDesktopDemo
                 {
 
                     emv_app_str += QPOSDesktopLib.Emv.format_tlv_value(sStuName);
+                    //Console.WriteLine("emv_app_str"+ sStuName);
 
                 }
                 else if (capk_start)
@@ -219,7 +220,7 @@ namespace QPOSDesktopDemo
                 else if (sStuName.Contains("</capk>"))
                 {
                     //Console.WriteLine("emv_capk_str=" + "\r\n" + emv_capk_str + "\r\n");
-                    Tip.d("emv_capk_str=" + "\r\n" + emv_capk_str + "\r\n");
+                    //Tip.d("emv_capk_str=" + "\r\n" + emv_capk_str + "\r\n");
                     capk_start = false;
                     emv_capk_str += ",";
                 }
@@ -286,7 +287,10 @@ namespace QPOSDesktopDemo
         }
         private void doTrade_Click(object sender, RoutedEventArgs e)
         {
+            //pos.setFormatID(39);
             pos.doTrade();
+            //UpdateEmv_from_xml();
+            //UpdateEmv_from_bin();
             return;
         }
 

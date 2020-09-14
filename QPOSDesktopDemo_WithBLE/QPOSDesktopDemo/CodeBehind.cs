@@ -1212,6 +1212,10 @@ namespace QPOSDesktopDemo
                 {
                     msg = "select app cancel,emv transaction terminated";
                 }
+                else if (displayMsg == QPOSService.Display.CARD_REMOVED)
+                {
+                    msg = "card removed";
+                }
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
@@ -1466,7 +1470,7 @@ namespace QPOSDesktopDemo
             public void onRequestSelectEmvApp(List<String> appList)
             {
                 
-                pos.selectEmvApp(0);
+                //pos.selectEmvApp(0);
                
             }
 
@@ -1487,6 +1491,15 @@ namespace QPOSDesktopDemo
                     pos.finalConfirm(false);
                 }
                 */
+            }
+            async public void onRequestException()
+            {
+                String msg = "select app timeout";
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    //this.txtDisplay.Text = msg;
+                    this.txtDisplay.Text = msg;
+                }, DispatcherPriority.Normal);
             }
 
             async public void onQposInfoResult(Dictionary<String, String> posInfoData)
@@ -1544,9 +1557,9 @@ namespace QPOSDesktopDemo
 
                 Dictionary<String, String> hashtable = new Dictionary<String, String>();
                 //pos.selectEmvApp(0);
-                hashtable = pos.getICCTag(0, 1, "9F33");
+                hashtable = pos.getICCTag(0, 1, "57");
                 
-                Console.WriteLine("9F33=" + hashtable["tlv"] + "\r\n");
+                Console.WriteLine("57=" + hashtable["tlv"] + "\r\n");
                 pos.sendOnlineProcessResult("8A023030");
                 //pos.sendOnlineProcessResult("8A025A33");
                 /*

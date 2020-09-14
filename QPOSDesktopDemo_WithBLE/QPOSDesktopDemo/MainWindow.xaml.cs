@@ -287,10 +287,7 @@ namespace QPOSDesktopDemo
         }
         private void doTrade_Click(object sender, RoutedEventArgs e)
         {
-            //pos.setFormatID(39);
             pos.doTrade();
-            //UpdateEmv_from_xml();
-            //UpdateEmv_from_bin();
             return;
         }
 

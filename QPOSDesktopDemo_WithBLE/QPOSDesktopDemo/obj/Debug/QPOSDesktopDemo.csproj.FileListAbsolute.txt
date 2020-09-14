@@ -111,5 +111,6 @@ D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\ob
 D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CopyComplete
 D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.exe
 D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.pdb
-D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csproj.CoreCompileInputs.cache
 D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Debug\QPOSDesktopDemo.csprojAssemblyReference.cache
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Debug\QPOSDesktopLib.pdb

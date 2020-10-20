@@ -265,8 +265,6 @@ namespace QPOSDesktopDemo
             pos.updateEmvConfig(emvAppCfg, emvCapkCfg);
 
         }
-
-
         private void update_firmware()
         {
             string file_name = "upgrader.asc";
@@ -284,6 +282,22 @@ namespace QPOSDesktopDemo
             
             pos.updatePosFirmware(array,"");
            
+        }
+        private void upload_dock_file(string filePath)
+        {
+            String fileName = System.IO.Path.GetFileName(filePath);
+            Tip.d("fileName="+fileName);
+            System.IO.FileStream fs = new FileStream(filePath, FileMode.Open);
+            long size = fs.Length;
+            fs.Seek(0, SeekOrigin.Begin);
+            byte[] array = new byte[size];
+            if (size != 0)
+            {
+                fs.Read(array, 0, array.Length);
+                fs.Close();
+            }
+            pos.dock_file_Write(fileName, array, array.Length);
+          
         }
         private void doTrade_Click(object sender, RoutedEventArgs e)
         {
@@ -305,20 +319,6 @@ namespace QPOSDesktopDemo
 
         private void resetPosStatus_Click(object sender, RoutedEventArgs e)
         {
-            //pos.sendDeviceCommandString("0000");
-            //Task.Delay(5000000);
-            //pos.doTrade();
-
-            // Testing for resetQPOSStatus() method
-            //if (pos.resetQPosStatus())
-            //{
-            //    textResult.Text = "resetQPOSStatus() Operation is completed!";
-            //}
-            //else
-            //{
-            //    textResult.Text = "resetQPOSStatus() Operation is failed...";
-            //}
-            // Testing for resetQPOS() method
             if (pos.resetQPOS())
             {
                 textResult.Text = "Device Reset is completed!";

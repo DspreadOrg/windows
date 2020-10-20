@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SDK_LIB;
 using System.Windows;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
@@ -17,6 +15,7 @@ using Windows.Devices.SerialCommunication;
 using System.Diagnostics;
 using System.Collections;
 using System.Windows.Controls;
+using SDK_LIB;
 
 namespace QPOSDesktopDemo
 {
@@ -540,7 +539,7 @@ namespace QPOSDesktopDemo
                             // Used to filter out virtualised USB port so only one USB connection will be enumerated.
                             var usbFilterStr = deviceInformation.Id.Substring(8, 23);
                            Console.WriteLine("deviceInformation.Id="+ deviceInformation.Id);
-                            if (usbFilterStr.Substring(usbFilterStr.Length - 2, 2) == "00")
+                            if (usbFilterStr.Substring(usbFilterStr.Length - 2, 2) == "00" || deviceInformation.Id.Contains("VID_0E8D"))
                             {
                                 NotifyUser("USB Device added - Device Name: " + deviceInformation.Name, NotifyType.StatusMessage);
                                 AddDeviceToList(deviceInformation, mapDeviceWatchersToDeviceSelector[sender]);
@@ -1216,6 +1215,22 @@ namespace QPOSDesktopDemo
                 {
                     msg = "card removed";
                 }
+                else if (displayMsg == QPOSService.Display.TRANS_RESULT_DECLINED)
+                {
+                    msg = "transaction declined";
+                }
+                else if (displayMsg == QPOSService.Display.USER_CANCEL)
+                {
+                    msg = "User Cancel";
+                }
+                else if (displayMsg == QPOSService.Display.GENERATE_RSA)
+                {
+                    msg = "Generate rsa file success";
+                }
+                else if (displayMsg == QPOSService.Display.PIN_WAIT)
+                {
+                    msg = "Please input pin ...";
+                }
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
@@ -1470,7 +1485,7 @@ namespace QPOSDesktopDemo
             public void onRequestSelectEmvApp(List<String> appList)
             {
                 
-                //pos.selectEmvApp(0);
+                pos.selectEmvApp(0);
                
             }
 
@@ -1501,7 +1516,28 @@ namespace QPOSDesktopDemo
                     this.txtDisplay.Text = msg;
                 }, DispatcherPriority.Normal);
             }
+            async public void onCvmPinResult(Dictionary<String, String> cvmpinData)
+            {
+                String pintrylimit = cvmpinData["pinTryLimit"] == null ? "" : cvmpinData["pinTryLimit"];
+                String RandomData  = cvmpinData["RandomData"] == null ? "" : cvmpinData["RandomData"];
+                String AESKey = cvmpinData["AESKey"] == null ? "" : cvmpinData["AESKey"];
+                String PAN = cvmpinData["PAN"] == null ? "" : cvmpinData["PAN"];
+                String isOnlinePin = cvmpinData["isOnlinePin"] == null ? "" : cvmpinData["isOnlinePin"];
+                String ResetTimes = cvmpinData["ResetTimes"] == null ? "" : cvmpinData["ResetTimes"];
+                string content = "";
+                content = "pinTryLimit " + pintrylimit;
+                content = "RandomData " + RandomData;
+                content = "AESKey " + AESKey;
+                content = "PAN " + PAN;
+                content = "isOnlinePin " + isOnlinePin;
+                content = "ResetTimes " + ResetTimes;
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    //this.txtDisplay.Text = msg;
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
 
+            }
             async public void onQposInfoResult(Dictionary<String, String> posInfoData)
             {
                 String isSupportedTrack1 = posInfoData["isSupportedTrack1"] == null ? "" : posInfoData["isSupportedTrack1"];
@@ -1745,7 +1781,11 @@ namespace QPOSDesktopDemo
             public void onRequestSetPin()
             {
                 pos.sendPin("1234");
-                //pos.emptyPin();
+            }
+            public void onRequestSetCvmPin()
+            {
+                
+                //pos.sendCvmPin("1234", false);
             }
 
             async public void onReturnCustomConfigResult(bool isSuccess, String result)
@@ -1778,7 +1818,7 @@ namespace QPOSDesktopDemo
 
                 return;
             }
-
+            
             public void onRequestCalculateMac(String calMac)
             {
 

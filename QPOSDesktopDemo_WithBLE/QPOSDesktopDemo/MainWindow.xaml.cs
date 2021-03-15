@@ -186,9 +186,7 @@ namespace QPOSDesktopDemo
                 //更新APP
                 if (app_start)
                 {
-
                     emv_app_str += QPOSDesktopLib.Emv.format_tlv_value(sStuName);
-                    //Console.WriteLine("emv_app_str"+ sStuName);
 
                 }
                 else if (capk_start)
@@ -198,29 +196,22 @@ namespace QPOSDesktopDemo
                 if (sStuName.Contains("<app>"))
                 {
                     app_start = true;
-                    //Console.WriteLine("app start-----------------\r\n");
                     Tip.d("app start-----------------\r\n");
                 }
                 else if (sStuName.Contains("</app>"))
                 {
-                    //下发参数,成功再次开始
-                    //Console.WriteLine("emv_app_str=" + "\r\n" + emv_app_str + "\r\n");
                     app_start = false;
                     //pos.updateEmv_AppConfig(emv_app_str);
                     emv_app_str += ",";
                 }
                 if (sStuName.Contains("<capk>"))
                 {
-                    //pos.updateEmv_AppConfig(emv_app_str);
                     capk_start = true;
                     app_start = false;
-                    //Console.WriteLine("capk start-----------------\r\n");
                     Tip.d("capk start-----------------\r\n");
                 }
                 else if (sStuName.Contains("</capk>"))
                 {
-                    //Console.WriteLine("emv_capk_str=" + "\r\n" + emv_capk_str + "\r\n");
-                    //Tip.d("emv_capk_str=" + "\r\n" + emv_capk_str + "\r\n");
                     capk_start = false;
                     emv_capk_str += ",";
                 }
@@ -246,7 +237,6 @@ namespace QPOSDesktopDemo
             {
                 fs.Read(array, 0, array.Length);
                 emvAppCfg = Util.byteArray2Hex(array);
-                //Console.WriteLine("emvAPPcfg=  " + emvAppCfg + "\r\n");
                 Tip.d("emvAPPcfg=  " + emvAppCfg + "\r\n");
                 fs.Close();
             }
@@ -258,7 +248,6 @@ namespace QPOSDesktopDemo
             {
                 fs_capk.Read(array_capk, 0, array_capk.Length);
                 emvCapkCfg = Util.byteArray2Hex(array_capk);
-                //Console.WriteLine("emvCapkCfg=  " + emvCapkCfg + "\r\n");
                 Tip.d("emvCapkCfg=  " + emvCapkCfg + "\r\n");
                 fs_capk.Close();
             }

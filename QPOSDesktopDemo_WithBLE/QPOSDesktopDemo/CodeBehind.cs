@@ -1064,10 +1064,10 @@ namespace QPOSDesktopDemo
                 pos = apos;
                 txtDisplay = txtDisplayResult;
             }
-
+          
             public void onRequestSetAmount()
             {
-                amount = "123";
+                amount = "3200";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
                 pos.setAmount(amount, cashbackAmount, "840", transactionType);
@@ -1231,6 +1231,14 @@ namespace QPOSDesktopDemo
                 {
                     msg = "Please input pin ...";
                 }
+                else if (displayMsg == QPOSService.Display.SECURE_MODE_CLEAR_DATA)
+                {
+                    msg = "Secure mode,recv clear command";
+                }
+                else if (displayMsg == QPOSService.Display.CLEAR_MODE_SECURE_DATA)
+                {
+                    msg = "Clear mode,recv secure command";
+                }
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
@@ -1244,7 +1252,20 @@ namespace QPOSDesktopDemo
 
                 // txtDisplay.Text = msg;
             }
-
+            
+            private string PacketTradeResultData(Dictionary<String, String> McrHash)
+            {
+                string result = "";
+                foreach (var str in TradeResultKey)
+                {
+                    if (McrHash.ContainsKey(str))
+                    {
+                        Tip.d("McrHash--key= " + str);
+                        result += str + ":  " + McrHash[str] + "\n";
+                    }
+                }
+                return result;
+            }
             async public void onDoTradeResult(QPOSService.DoTradeResult result, Dictionary<String, String> decodeData)
             {
                 String content = "";
@@ -1265,191 +1286,26 @@ namespace QPOSDesktopDemo
                 {
                     content = "Bad Swipe. Please swipe again and press check card.";
                 }
-
                 else if (result == QPOSService.DoTradeResult.PLAIN_TRACK)
                 {
-                    String formatID = decodeData["formatID"];
-                    String type = decodeData["type"] == null ? "" : decodeData["type"];
-                    String encTrack1 = decodeData["encTrack1"] == null ? "" : decodeData["encTrack1"];
-                    String encTrack2 = decodeData["encTrack2"] == null ? "" : decodeData["encTrack2"];
-                    String encTrack3 = decodeData["encTrack3"] == null ? "" : decodeData["encTrack3"];
-
-
-                    content = " card_swiped : " + "\n";
-                    content += " format_id =" + " " + formatID + "\n";
-                    content += " type =" + " " + type + "\n";
-                    content += " encrypted_track_1 :" + " " + encTrack1 + "\n";
-                    content += " encrypted_track_2 :" + " " + encTrack2 + "\n";
-                    content += " encrypted_track_3 :" + " " + encTrack3 + "\n";
-
+                    content= "\ncard_swiped: " + "\n";
+                    content += PacketTradeResultData(decodeData);
                 }
                 else if (result == QPOSService.DoTradeResult.ManulEnc)
                 {
-                    String pinksn = decodeData["pinKsn"];
-                    String trackblock = decodeData["trackblock"] == null ? "" : decodeData["trackblock"];
-
-
-                    content = " card_swiped : " + "\n";
-                    content += " pinksn =" + " " + pinksn + "\n";
-                    content += " trackblock =" + " " + trackblock + "\n";
-
+                    content = "\ncard_swiped: " + "\n";
+                    content += PacketTradeResultData(decodeData);
                 }
                 else if (result == QPOSService.DoTradeResult.MCR)
                 {
-                    String formatID = decodeData["formatID"];
-                    if (formatID.Equals("30") || formatID.Equals("38") || formatID.Equals("57"))
-                    {
-                        String maskedPAN = decodeData["maskedPAN"];
-                        String expiryDate = decodeData["expiryDate"];
-                        String cardHolderName = decodeData["cardholderName"];
-                        String ksn = decodeData["ksn"];
-                        String serviceCode = decodeData["serviceCode"];
-                        String track1Length = decodeData["track1Length"];
-                        String track2Length = decodeData["track2Length"];
-                        String track3Length = decodeData["track3Length"];
-                        String encTracks = decodeData["encTracks"];
-                        String encTrack1 = decodeData["encTrack1"];
-                        String encTrack2 = decodeData["encTrack2"];
-                        String encTrack3 = decodeData["encTrack3"];
-                        String partialTrack = decodeData["partialTrack"];
-                        //TODO 
-                        String pinKsn = decodeData["pinKsn"];
-                        String trackksn = decodeData["trackksn"];
-                        String pinBlock = decodeData["pinBlock"];
-
-                        content = " card_swiped ";
-
-                        content += " format_id " + " " + formatID + "\n";
-                        content += " masked_pan " + " " + maskedPAN + "\n";
-                        content += " expiry_date " + " " + expiryDate + "\n";
-                        content += " cardholder_name " + " " + cardHolderName + "\n";
-                        content += " ksn " + " " + ksn + "\n";
-                        content += " pinKsn " + " " + pinKsn + "\n";
-                        content += " trackksn " + " " + trackksn + "\n";
-                        content += " service_code " + " " + serviceCode + "\n";
-                        content += " track_1_length " + " " + track1Length + "\n";
-                        content += " track_2_length " + " " + track2Length + "\n";
-                        content += " track_3_length " + " " + track3Length + "\n";
-                        content += " encrypted_tracks " + " " + encTracks + "\n";
-                        content += " encrypted_track_1 " + " " + encTrack1 + "\n";
-                        content += " encrypted_track_2 " + " " + encTrack2 + "\n";
-                        content += " encrypted_track_3 " + " " + encTrack3 + "\n";
-                        content += " partial_track " + " " + partialTrack + "\n";
-                        content += " pinBlock " + " " + pinBlock + "\n";
-                    }
-                    else
-                    {
-                        String maskedPAN = decodeData["maskedPAN"];
-                        String expiryDate = decodeData["expiryDate"];
-                        String cardHolderName = decodeData["cardholderName"];
-
-                        String serviceCode = decodeData["serviceCode"];
-
-                        String trackblock = decodeData["trackblock"];
-                        String psamId = decodeData["psamId"];
-                        //TODO 
-                        String posId = decodeData["posId"];
-                        String macblock = decodeData["macblock"];
-                        String pinblock = decodeData["pinblock"];
-                        String activateCode = decodeData["activateCode"];
-
-                        content = " card_swiped ";
-
-                        content += " format_id " + " " + formatID + "\n";
-                        content += " maskedPAN " + " " + maskedPAN + "\n";
-                        content += " expiry_date " + " " + expiryDate + "\n";
-                        content += " cardholder_name " + " " + cardHolderName + "\n";
-                        content += " service_code " + " " + serviceCode + "\n";
-
-                        content += " trackblock " + " " + trackblock + "\n";
-                        content += " psamId " + " " + psamId + "\n";
-                        content += " posId " + " " + posId + "\n";
-                        content += " macblock " + " " + macblock + "\n";
-                        content += " pinblock " + " " + pinblock + "\n";
-                        content += " activateCode " + " " + activateCode + "\n";
-
-                    }
-
+                    content = "\ncard_swiped: " + "\n";
+                    content += PacketTradeResultData(decodeData);
                     //pos.getPin(9,0,6,"PLS Input Pin:", maskedPAN,"",60);
-
                 }
-
                 else if ((result == QPOSService.DoTradeResult.NFC_ONLINE) || (result == QPOSService.DoTradeResult.NFC_OFFLINE))
                 {
-                    String formatID = decodeData["formatID"];
-                    Console.WriteLine("formatID=" + formatID + "\r\n");
-                    if (formatID.Equals("31") || formatID.Equals("40") || formatID.Equals("37") || formatID.Equals("17") || formatID.Equals("11") || formatID.Equals("10"))
-                    {
-                        String maskedPAN = decodeData["maskedPAN"] == null ? "" : decodeData["maskedPAN"];
-                        String expiryDate = decodeData["expiryDate"] == null ? "" : decodeData["expiryDate"];
-                        String cardHolderName = decodeData["cardholderName"] == null ? "" : decodeData["cardholderName"];
-                        String serviceCode = decodeData["serviceCode"] == null ? "" : decodeData["serviceCode"];
-                        String trackblock = decodeData["trackblock"] == null ? "" : decodeData["trackblock"];
-                        String psamId = decodeData["psamId"] == null ? "" : decodeData["psamId"];
-                        String posId = decodeData["posId"] == null ? "" : decodeData["posId"];
-                        String pinblock = decodeData["pinblock"] == null ? "" : decodeData["pinblock"];
-                        String macblock = decodeData["macblock"] == null ? "" : decodeData["macblock"];
-                        String activateCode = decodeData["activateCode"] == null ? "" : decodeData["activateCode"];
-                        String NFCBatchData = decodeData["NFCBatchData"] == null ? "" : decodeData["NFCBatchData"];
-
-                        content = "tap card";
-                        content += " format_id " + " " + formatID + "\n";
-                        content += " masked_pan " + " " + maskedPAN + "\n";
-                        content += " expiry_date " + " " + expiryDate + "\n";
-                        content += " cardholder_name " + " " + cardHolderName + "\n";
-
-                        content += "service_code " + "" + serviceCode + "\n";
-                        content += "trackblock: " + trackblock + "\n";
-                        content += "psamId: " + psamId + "\n";
-                        content += "posId: " + posId + "\n";
-                        content += "pinBlock" + " " + pinblock + "\n";
-                        content += "macblock: " + macblock + "\n";
-                        content += "activateCode: " + activateCode + "\n";
-                        content += "NFCBatchData: " + NFCBatchData + "\n";
-                    }
-                    else
-                    {
-                        String maskedPAN = decodeData["maskedPAN"] == null ? "" : decodeData["maskedPAN"];
-                        String expiryDate = decodeData["expiryDate"] == null ? "" : decodeData["expiryDate"];
-                        String cardHolderName = decodeData["cardholderName"] == null ? "" : decodeData["cardholderName"];
-                        String ksn = decodeData["ksn"] == null ? "" : decodeData["ksn"];
-                        String serviceCode = decodeData["serviceCode"] == null ? "" : decodeData["serviceCode"];
-                        String track1Length = decodeData["track1Length"] == null ? "" : decodeData["track1Length"];
-                        String track2Length = decodeData["track2Length"] == null ? "" : decodeData["track2Length"];
-                        String track3Length = decodeData["track3Length"] == null ? "" : decodeData["track3Length"];
-                        String encTracks = decodeData["encTracks"] == null ? "" : decodeData["encTracks"];
-                        String encTrack1 = decodeData["encTrack1"] == null ? "" : decodeData["encTrack1"];
-                        String encTrack2 = decodeData["encTrack2"] == null ? "" : decodeData["encTrack2"];
-                        String encTrack3 = decodeData["encTrack3"] == null ? "" : decodeData["encTrack3"];
-                        String partialTrack = decodeData["partialTrack"] == null ? "" : decodeData["partialTrack"];
-                        //TODO 
-                        String pinKsn = decodeData["pinKsn"] == null ? "" : decodeData["pinKsn"];
-                        String trackksn = decodeData["trackksn"] == null ? "" : decodeData["trackksn"];
-                        String pinBlock = decodeData["pinBlock"] == null ? "" : decodeData["pinBlock"];
-                        String NFCBatchData = decodeData["NFCBatchData"] == null ? "" : decodeData["NFCBatchData"];
-
-                        content = " tap card ";
-
-                        content += " format_id " + " " + formatID + "\n";
-                        content += " masked_pan " + " " + maskedPAN + "\n";
-                        content += " expiry_date " + " " + expiryDate + "\n";
-                        content += " cardholder_name " + " " + cardHolderName + "\n";
-                        content += " ksn " + " " + ksn + "\n";
-                        content += " pinKsn " + " " + pinKsn + "\n";
-                        content += " trackksn " + " " + trackksn + "\n";
-                        content += " service_code " + " " + serviceCode + "\n";
-                        content += " track_1_length " + " " + track1Length + "\n";
-                        content += " track_2_length " + " " + track2Length + "\n";
-                        content += " track_3_length " + " " + track3Length + "\n";
-                        content += " encrypted_tracks " + " " + encTracks + "\n";
-                        content += " encrypted_track_1 " + " " + encTrack1 + "\n";
-                        content += " encrypted_track_2 " + " " + encTrack2 + "\n";
-                        content += " encrypted_track_3 " + " " + encTrack3 + "\n";
-                        content += " partial_track " + " " + partialTrack + "\n";
-                        content += " pinBlock " + " " + pinBlock + "\n";
-                        content += "NFCBatchData: " + NFCBatchData + "\n";
-                    }
-
+                    content = "\ntap card: "+"\n";
+                    content+=PacketTradeResultData(decodeData);
                 }
                 else if ((result == QPOSService.DoTradeResult.NFC_DECLINED))
                 {
@@ -1484,9 +1340,7 @@ namespace QPOSDesktopDemo
 
             public void onRequestSelectEmvApp(List<String> appList)
             {
-                
-                pos.selectEmvApp(0);
-               
+                pos.selectEmvApp(0);  
             }
 
             public void onRequestFinalConfirm()
@@ -1518,19 +1372,8 @@ namespace QPOSDesktopDemo
             }
             async public void onCvmPinResult(Dictionary<String, String> cvmpinData)
             {
-                String pintrylimit = cvmpinData["pinTryLimit"] == null ? "" : cvmpinData["pinTryLimit"];
-                String RandomData  = cvmpinData["RandomData"] == null ? "" : cvmpinData["RandomData"];
-                String AESKey = cvmpinData["AESKey"] == null ? "" : cvmpinData["AESKey"];
-                String PAN = cvmpinData["PAN"] == null ? "" : cvmpinData["PAN"];
-                String isOnlinePin = cvmpinData["isOnlinePin"] == null ? "" : cvmpinData["isOnlinePin"];
-                String ResetTimes = cvmpinData["ResetTimes"] == null ? "" : cvmpinData["ResetTimes"];
                 string content = "";
-                content = "pinTryLimit " + pintrylimit;
-                content = "RandomData " + RandomData;
-                content = "AESKey " + AESKey;
-                content = "PAN " + PAN;
-                content = "isOnlinePin " + isOnlinePin;
-                content = "ResetTimes " + ResetTimes;
+                content = PacketTradeResultData(cvmpinData);
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
@@ -1540,42 +1383,14 @@ namespace QPOSDesktopDemo
             }
             async public void onQposInfoResult(Dictionary<String, String> posInfoData)
             {
-                String isSupportedTrack1 = posInfoData["isSupportedTrack1"] == null ? "" : posInfoData["isSupportedTrack1"];
-                String isSupportedTrack2 = posInfoData["isSupportedTrack2"] == null ? "" : posInfoData["isSupportedTrack2"];
-                String isSupportedTrack3 = posInfoData["isSupportedTrack3"] == null ? "" : posInfoData["isSupportedTrack3"];
-                String bootloaderVersion = posInfoData["bootloaderVersion"] == null ? "" : posInfoData["bootloaderVersion"];
-                String firmwareVersion = posInfoData["firmwareVersion"] == null ? "" : posInfoData["firmwareVersion"];
-                String isUsbConnected = posInfoData["isUsbConnected"] == null ? "" : posInfoData["isUsbConnected"];
-                String isCharging = posInfoData["isCharging"] == null ? "" : posInfoData["isCharging"];
-                String batteryLevel = posInfoData["batteryLevel"] == null ? "" : posInfoData["batteryLevel"];
-                String hardwareVersion = posInfoData["hardwareVersion"] == null ? "" : posInfoData["hardwareVersion"];
-                String updateWorkKeyFlag = posInfoData["updateWorkKeyFlag"] == null ? "" : posInfoData["updateWorkKeyFlag"];
-
                 String content = "";
-                content += " bootloader_version " + bootloaderVersion + "\n";
-                content += " firmware_version " + firmwareVersion + "\n";
-                content += " usb " + isUsbConnected + "\n";
-                content += " charge " + isCharging + "\n";
-                content += " battery_level " + batteryLevel + "\n";
-                content += " hardware_version " + hardwareVersion + "\n";
-                content += " track_1_supported " + isSupportedTrack1 + "\n";
-                content += " track_2_supported " + isSupportedTrack2 + "\n";
-                content += " track_3_supported " + isSupportedTrack3 + "\n";
-                content += "updateWorkKeyFlag: " + updateWorkKeyFlag + "\n";
+                content = PacketTradeResultData(posInfoData);
 
-                // txtDisplay.Text = content;this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
-
-                /*
-                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }));
-                */
 
             }
 
@@ -1583,21 +1398,13 @@ namespace QPOSDesktopDemo
             {
                 Dictionary<String, String> decodeData = pos.anlysEmvIccData(tlv);
 
-                //String maskedPAN=decodeData["maskedPAN"];
-                //String expiryDate = decodeData["expiryDate"];
-                //String cardholderName = decodeData["cardholderName"];
-                //String encTracks = decodeData["trackblock"];
-                //String MacBlock  = decodeData["macblock"];
-
-                //Tip.d("online result :\n" + "maskedPAN=" + maskedPAN + "\n"+"macBlock ="+ MacBlock+"\n"+"expiryDate=" + expiryDate + "\n" + "encTracks=" + encTracks);
-
                 Dictionary<String, String> hashtable = new Dictionary<String, String>();
                 //pos.selectEmvApp(0);
                 hashtable = pos.getICCTag(0, 1, "57");
                 
-                Console.WriteLine("57=" + hashtable["tlv"] + "\r\n");
-                pos.sendOnlineProcessResult("8A023030");
-                //pos.sendOnlineProcessResult("8A025A33");
+                Tip.d("57=" + hashtable["tlv"] + "\r\n");
+                //pos.sendOnlineProcessResult("8A023035");
+                pos.sendOnlineProcessResult("8A025A33");
                 /*
                 if (MessageBox.Show("Request is Online process!", "callback tips", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                 {
@@ -1612,7 +1419,6 @@ namespace QPOSDesktopDemo
 
             public void onRequestIsServerConnected()
             {
-                //MessageBox.Show("Request is Server connected!", "callback tips", MessageBoxButton.OK);
                 pos.isServerConnected(true);
             }
 
@@ -1703,6 +1509,18 @@ namespace QPOSDesktopDemo
                 {
                     message = ("invalid_icc_data");
                 }
+                else if (transactionResult == QPOSService.TransactionResult.EMV_APP_BLOCKED)
+                {
+                    message = ("card application blocked");
+                }
+                else if (transactionResult == QPOSService.TransactionResult.EMV_PLS_SEE_PHONE)
+                {
+                    message = ("Please see phone");
+                }
+                else if (transactionResult == QPOSService.TransactionResult.EMV_CARD_BLOCKED)
+                {
+                    message = ("Emv Card blocked");
+                }
 
                 amount = "";
                 cashbackAmount = "";
@@ -1745,7 +1563,60 @@ namespace QPOSDesktopDemo
                 }));
                 */
             }
+            private string TransactionResultReturn(QPOSService.TransactionResult type)
+            {
+                string result = "";
+                switch (type)
+                {
+                    case QPOSService.TransactionResult.APPROVED:
+                        result= "APPROVED";
+                        break;
+                    case QPOSService.TransactionResult.DECLINED:
+                        result = "DECLINED";
+                        break;
+                    case QPOSService.TransactionResult.CANCEL:
+                        result = "CANCEL";
+                        break;
+                    case QPOSService.TransactionResult.CAPK_FAIL:
+                        result = "CAPK_FAIL";
+                        break;
+                    case QPOSService.TransactionResult.DEVICE_ERROR:
+                        result = "DEVICE_ERROR";
+                        break;
+                    case QPOSService.TransactionResult.CARD_NOT_SUPPORTED:
+                        result = "CARD_NOT_SUPPORTED";
+                        break;
+                    case QPOSService.TransactionResult.MISSING_MANDATORY_DATA:
+                        result = "MISSING_MANDATORY_DATA";
+                        break;
+                    case QPOSService.TransactionResult.NFC_TERMINATED:
+                        result = "NFC_TERMINATED";
+                        break;
+                    case QPOSService.TransactionResult.TRANSACTION_NOT_ALLOWED_AMOUNT_EXCEED:
+                        result = "TRANSACTION_NOT_ALLOWED_AMOUNT_EXCEED";
+                        break;
 
+                }
+                result += "\nTlv_data:";
+                return result;
+            }
+            async public void onRequestNFCBatchData(QPOSService.TransactionResult type,String tlv)
+            {
+                String content = "transaction result:   ";
+                content += TransactionResultReturn(type);
+                content += tlv;
+                //txtDisplay.Text = content;
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+                /*
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+                */
+            }
             public void onRequestQposConnected()
             {
                 MainWindow.deviceConnected = true;
@@ -1784,13 +1655,11 @@ namespace QPOSDesktopDemo
             }
             public void onRequestSetCvmPin()
             {
-                
-                //pos.sendCvmPin("1234", false);
+                pos.sendCvmPin("1234", false);
             }
 
             async public void onReturnCustomConfigResult(bool isSuccess, String result)
             {
-
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
@@ -1800,7 +1669,6 @@ namespace QPOSDesktopDemo
             }
             async public void onReturnUpdateFirmwareResult(bool isSuccess, String result)
             {
-
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
@@ -1810,7 +1678,6 @@ namespace QPOSDesktopDemo
             }
             async public void onReturnUpdateEmvConfigResult(bool isSuccess, String result)
             {
-
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
@@ -1856,19 +1723,10 @@ namespace QPOSDesktopDemo
 
             async public void onReturnGetPinResult(Dictionary<String, String> result)
             {
-                String pinBlock = result["pinBlock"];
-                String pinKsn = result["pinKsn"];
                 String content = "get pin result\n";
+                content += PacketTradeResultData(result);
 
-                content += "pinKsn: " + " " + pinKsn + "\n";
-                content += "pinBlock: " + " " + pinBlock + "\n";
-                /*
-                //txtDisplay.Text = content;
-                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }));
-                */
+
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
@@ -1890,9 +1748,7 @@ namespace QPOSDesktopDemo
 
             public void onRequestUpdateWorkKeyResult(QPOSService.UpdateInformationResult result)
             {
-
                 Debug.WriteLine("result : " + result);
-
                 return;
             }
             async public void onReturnUpdateFirmwareResult(QPOSService.UpdateInformationResult result)
@@ -1934,7 +1790,8 @@ namespace QPOSDesktopDemo
                 String posId = posIdTable["posId"] == null ? "" : posIdTable["posId"];
 
                 String content = "";
-                content += "posId: " + posId + "\n";
+                content = PacketTradeResultData(posIdTable);
+                //content += "posId: " + posId + "\n";
 
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
@@ -1967,17 +1824,7 @@ namespace QPOSDesktopDemo
             }
             async public void onReturnSendDeviceCommandString(bool isSuccess)
             {
-                String content;
-                if (isSuccess)
-                {
-                    content = "success";
-                }
-                else
-                {
-
-                    content = "fail";
-
-                }
+                String content=(isSuccess ? "SUCCESS":"FAIL");
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
@@ -1985,6 +1832,59 @@ namespace QPOSDesktopDemo
 
             }
         }
+
+        
+        private static string[] TradeResultKey =
+        {
+            "formatID",
+            "maskedPAN",
+            "expiryDate",
+            "cardholderName",
+            "ksn",
+            "serviceCode",
+            "track1Length",
+            "track2Length",
+            "track3Length",
+            "encTracks",
+            "encTrack1",
+            "encTrack2",
+            "encTrack3",
+            "partialTrack",
+            "pinKsn",
+            "trackksn",
+            "pinBlock",
+            "trackblock",
+            "psamId",
+            "posId",
+            "macblock",
+            "activateCode",
+            "type",
+            "NFCBatchData",
+            "isSupportedTrack1",
+            "isSupportedTrack2",
+            "isSupportedTrack3",
+            "bootloaderVersion",
+            "firmwareVersion",
+            "isUsbConnected",
+            "isCharging",
+            "batteryLevel",
+            "hardwareVersion",
+            "updateWorkKeyFlag",
+            "pinTryLimit",
+            "RandomData",
+            "AESKey",
+            "PAN",
+            "isOnlinePin",
+            "ResetTimes",
+            "compileTime",
+            "Manufacturere",
+            "ModelInfor",
+            "Voltage",
+            "isKeyboard",
+            "batteryPercentage",
+            "PCI_hardwareVersion",
+            "PCI_firmwareVersion"
+        };
         #endregion
     }
 }

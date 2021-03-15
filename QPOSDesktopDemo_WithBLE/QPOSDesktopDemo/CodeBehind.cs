@@ -1067,10 +1067,10 @@ namespace QPOSDesktopDemo
           
             public void onRequestSetAmount()
             {
-                amount = "3200";
+                amount = "222";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
-                pos.setAmount(amount, cashbackAmount, "840", transactionType);
+                pos.setAmount(amount, cashbackAmount, "156", transactionType);
             }
 
             async public void onError(QPOSService.Error errorState)
@@ -1260,7 +1260,7 @@ namespace QPOSDesktopDemo
                 {
                     if (McrHash.ContainsKey(str))
                     {
-                        Tip.d("McrHash--key= " + str);
+                        //Tip.d("McrHash--key= " + str);
                         result += str + ":  " + McrHash[str] + "\n";
                     }
                 }
@@ -1306,6 +1306,8 @@ namespace QPOSDesktopDemo
                 {
                     content = "\ntap card: "+"\n";
                     content+=PacketTradeResultData(decodeData);
+                    pos.sendNfcProcessResult("8A02303091100102030405060708000000000000000072189F180400000001860F8C2400000A8E081122334455667788");
+
                 }
                 else if ((result == QPOSService.DoTradeResult.NFC_DECLINED))
                 {

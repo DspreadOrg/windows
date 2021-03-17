@@ -1793,6 +1793,7 @@ namespace QPOSDesktopDemo
 
                 String content = "";
                 content = PacketTradeResultData(posIdTable);
+                
                 //content += "posId: " + posId + "\n";
 
                 /*

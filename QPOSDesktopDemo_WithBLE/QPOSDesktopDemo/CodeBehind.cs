@@ -1793,7 +1793,8 @@ namespace QPOSDesktopDemo
 
                 String content = "";
                 content = PacketTradeResultData(posIdTable);
-                
+                Tip.d("onQposIdResult---->>");
+                pos.getQposInfo();
                 //content += "posId: " + posId + "\n";
 
                 /*
@@ -1886,7 +1887,10 @@ namespace QPOSDesktopDemo
             "isKeyboard",
             "batteryPercentage",
             "PCI_hardwareVersion",
-            "PCI_firmwareVersion"
+            "PCI_firmwareVersion",
+            "newPin",
+            "encPAN",
+            "hashPan"
         };
         #endregion
     }

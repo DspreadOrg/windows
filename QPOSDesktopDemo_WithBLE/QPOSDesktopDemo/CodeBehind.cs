@@ -1835,6 +1835,21 @@ namespace QPOSDesktopDemo
                 }, DispatcherPriority.Normal);
 
             }
+
+            public void onReturnPowerOnNFCResult(bool isSuccess, string ksn, string attributes, int attributesLen)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void onReturnPowerOffNFCResult(bool isSuccess)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void onReturnANFCpduResult(bool isSuccess, string apdu, int apduLen)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         

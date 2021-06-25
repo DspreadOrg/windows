@@ -1067,7 +1067,7 @@ namespace QPOSDesktopDemo
           
             public void onRequestSetAmount()
             {
-                amount = "222";
+                amount = "0";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
                 pos.setAmount(amount, cashbackAmount, "156", transactionType);
@@ -1239,6 +1239,10 @@ namespace QPOSDesktopDemo
                 {
                     msg = "Clear mode,recv secure command";
                 }
+                else if (displayMsg == QPOSService.Display.APDU_ERROR)
+                {
+                    msg = "Apdu error,retap card";
+                }
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
@@ -1342,7 +1346,7 @@ namespace QPOSDesktopDemo
 
             public void onRequestSelectEmvApp(List<String> appList)
             {
-                pos.selectEmvApp(0);  
+                //pos.selectEmvApp(0);  
             }
 
             public void onRequestFinalConfirm()
@@ -1723,6 +1727,34 @@ namespace QPOSDesktopDemo
 
             }
 
+            public void onReturnApduNFCResult(bool isSuccess, String apdu, int apduLen)
+            {
+
+            }
+
+            async public void onReturnPowerOffNFCResult(bool isSuccess)
+            {
+                String content = "NFC power_off:";
+                content += (isSuccess ? "SUCCESS" : "Fail");
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onReturnPowerOnNFCResult(bool isSuccess, String ksn, String atr, int atrLen)
+            {
+                String content = "NFC power_on:";
+                content += (isSuccess ? "SUCCESS" : "Fail");
+                content += "\n";
+                content += "ksn:" + ksn + "\n" + "ATR " + "(" + atrLen + "): " + atr;
+              
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
             async public void onReturnGetPinResult(Dictionary<String, String> result)
             {
                 String content = "get pin result\n";
@@ -1794,7 +1826,6 @@ namespace QPOSDesktopDemo
                 String content = "";
                 content = PacketTradeResultData(posIdTable);
                 Tip.d("onQposIdResult---->>");
-                pos.getQposInfo();
                 //content += "posId: " + posId + "\n";
 
                 /*
@@ -1836,19 +1867,18 @@ namespace QPOSDesktopDemo
 
             }
 
-            public void onReturnPowerOnNFCResult(bool isSuccess, string ksn, string attributes, int attributesLen)
+            async public void onReturnANFCpduResult(bool isSuccess, string apdu, int apduLen)
             {
-                throw new NotImplementedException();
-            }
-
-            public void onReturnPowerOffNFCResult(bool isSuccess)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void onReturnANFCpduResult(bool isSuccess, string apdu, int apduLen)
-            {
-                throw new NotImplementedException();
+                String content = (isSuccess ? "SUCCESS" : "FAIL");
+                if (isSuccess)
+                {
+                    content += "\n";
+                    content += "recv:" + apduLen + "\n" + apdu;
+                }
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
             }
         }
 

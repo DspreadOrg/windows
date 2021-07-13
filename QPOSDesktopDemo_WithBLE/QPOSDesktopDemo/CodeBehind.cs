@@ -1673,6 +1673,16 @@ namespace QPOSDesktopDemo
 
                 return;
             }
+            async public void onReturnQrCodeResult(bool isSuccess)
+            {
+                String result=(isSuccess?"QrCode Success":"QrCode fail");
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = result;
+                }, DispatcherPriority.Normal);
+
+                return;
+            }
             async public void onReturnUpdateFirmwareResult(bool isSuccess, String result)
             {
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>

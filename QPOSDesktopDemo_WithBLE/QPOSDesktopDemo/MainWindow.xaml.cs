@@ -291,21 +291,18 @@ namespace QPOSDesktopDemo
         private void doTrade_Click(object sender, RoutedEventArgs e)
         {
             pos.doTrade();
-            //pos.powerOnNFC();
             return;
         }
 
         private void getPosId_Click(object sender, RoutedEventArgs e)
         {
             pos.getQposId();
-            //pos.sendApduByNFC("00A404000E315041592E5359532E444446303100",30);
             return;
         }
 
         private void getPosInfo_Click(object sender, RoutedEventArgs e)
         {
             pos.getQposInfo();
-            //pos.powerOffNFC();
             return;
         }
 

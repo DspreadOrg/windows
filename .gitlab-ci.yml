@@ -19,7 +19,7 @@
 # You need to have the network drive mapped as Local System user for gitlab-runner service to see it
 # The best way to persist the mapping is via a scheduled task (see: https://stackoverflow.com/a/7867064/1288473),
 # running the following batch command: net use P: \\x.x.x.x\Projects /u:your_user your_pass /persistent:yes
-
+image: microsoft/dotnet:latest
 
 # place project specific paths in variables to make the rest of the script more generic
 variables:
@@ -38,8 +38,6 @@ stages:
 
 build_job:
   stage: build
-  only:
-    - tags  # the build process will only be started by git tag commits
   script:
     - '& "$env:NUGET_PATH" restore'  # restore Nuget dependencies
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release'  # build the project
@@ -52,8 +50,6 @@ build_job:
 
 test_job:
   stage: test
-  only:
-    - tags
   script:
     - '& "$env:NUNIT_PATH" ".\$env:TEST_FOLDER\Tests.dll"'  # running NUnit tests
   artifacts:
@@ -66,8 +62,6 @@ test_job:
 
 deploy_job:
   stage: deploy
-  only:
-    - tags
   script:
     # Compose a folder for each release based on commit tag.
     # Assuming your tag is Rev1.0.0.1, and your last commit message is 'First commit'

@@ -94,7 +94,6 @@ D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\ob
 D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.exe
 D:\Git_Repository\windows_sdk\windows\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.pdb
 D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csproj.CoreCompileInputs.cache
-D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csprojAssemblyReference.cache
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Release\QPOSDesktopDemo.exe.config
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Release\QPOSDesktopDemo.exe
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\bin\Release\QPOSDesktopDemo.pdb
@@ -115,3 +114,6 @@ C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csproj.CopyComplete
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.exe
 C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.pdb
+C:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csprojAssemblyReference.cache
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csproj.AssemblyReference.cache
+D:\DH_POS\possdk\C#\net4.5.2\QPOSDesktopDemo_WithBLE\QPOSDesktopDemo\obj\Release\QPOSDesktopDemo.csproj.SuggestedBindingRedirects.cache

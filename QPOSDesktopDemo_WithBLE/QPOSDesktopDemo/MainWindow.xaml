@@ -11,9 +11,13 @@
     <Window.Resources>
         <CollectionViewSource x:Key="DeviceListSource"/>
     </Window.Resources>
-    
+
     <!-- Main Grid for the Layout-->
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="389*"/>
+            <ColumnDefinition Width="304*"/>
+        </Grid.ColumnDefinitions>
         <!-- Grid Definitions 4 Horizontal Rows -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -22,26 +26,26 @@
             <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Content in the 1st row -->
         <!-- Contains buttons for scan USB/Bluetooth Legacy device button and pair Bluetooth device button -->
-        <Border Padding="0 10 0 10">
+        <Border Padding="0 10 0 10" Grid.ColumnSpan="2" Margin="0,0,-0.4,207" Grid.RowSpan="2">
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Button x:Name="scanSerial" Content="Scan Serial/Legacy Bluetooth Devices" Width="350" Click="scanSerial_Click" FontSize="16" Margin="20 0 0 0"/>
                 <Button x:Name="scanBLE" Content="Scan Bluetooth 4.0 Devices" Width="220" Click="scanBLE_Click" FontSize="16" Margin="20 0 0 0"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Content of the 2nd row -->
         <!-- Contains Device list and connection/disconnection controls -->
-        <Border Grid.Row="1" Padding="20 10 20 10">
+        <Border Grid.Row="1" Padding="20 10 20 10" Grid.ColumnSpan="2" Margin="0,0.2,-0.4,0">
             <Grid>
                 <!-- Column Definitions -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition Width="6*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <!-- Area for placing the connection/disconnection control buttons -->
                 <StackPanel Margin="0 0 10 0" Grid.Column="0" Orientation="Vertical">
                     <Button x:Name="pairBluetooth" Content="Pair Bluetooth Device" Width="200" Height="35" Click="pairBluetooth_Click" FontSize="16" Margin="0"/>
@@ -49,14 +53,14 @@
                     <Button x:Name="ButtonConnectToUSBDevice" Content="Connect via Serial Port" Width="200" Height="35" FontSize="16" Margin="0 15 0 0" Click="ButtonConnectToUSBDevice_Click"/>
                     <Button x:Name="ButtonDisconnectFromDevice" Content="Disconnect" Width="200" Height="35" Click="ButtonDisconnectFromDevice_Click" FontSize="16" Margin="0 15 0 0"/>
                 </StackPanel>
-                
+
                 <!-- Area for placing the ItemBox UI Element -->
                 <StackPanel Grid.Column="1" Margin="10 0 0 0">
                     <!-- TextBlock for some explanation -->
                     <TextBlock x:Name="textBlock" HorizontalAlignment="Stretch" Margin="0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16">
                     Select a Device: (If legacy Bluetooth device is not listed here, please make sure it has paired with your PC.)
                     </TextBlock>
-                    
+
                     <!-- ItemView for showing the device list -->
                     <ListView x:Name="ConnectDevices" ItemsSource="{Binding Source={StaticResource DeviceListSource}}"
                          Background="Gray" Margin="0" BorderBrush="BlanchedAlmond" BorderThickness="2"
@@ -133,29 +137,37 @@
 
         <!-- Content of the 3rd row -->
         <!-- Contains 4 buttons corresponding the 4 demo functions: DoTrade, GetPosId, GetPosInfo and resetPosStatus -->
-        <Border Padding="20 10 20 10" Grid.Row="2">
+        <Border Padding="20 10 20 10" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,-0.4,206.2" Grid.RowSpan="2">
             <StackPanel x:Name="functionGroup" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="doTrade" Content="doTrade" FontSize="16" Click="doTrade_Click" Width="120" Margin="0 0 30 0"/>
-                <Button x:Name="getPosId" Content="get Pos ID" FontSize="16" Click="getPosId_Click" Width="120" Margin="0 0 30 0"/>
-                <Button x:Name="getPosInfo" Content="get Pos Info" FontSize="16" Click="getPosInfo_Click" Width="120" Margin="0 0 30 0" Height="43" VerticalAlignment="Top"/>
-                <Button x:Name="resetPosStatus" Content="Reset PosStatus" FontSize="16" Click="resetPosStatus_Click"/>
+                <Button x:Name="doTrade" Content="doTrade" FontSize="16" Click="doTrade_Click" Width="100" Margin="0 0 20 0"/>
+                <Button x:Name="getPosId" Content="get Pos ID" FontSize="16" Click="getPosId_Click" Width="100" Margin="0 0 20 0"/>
+                <Button x:Name="getPosInfo" Content="get Pos Info" FontSize="16" Click="getPosInfo_Click" Width="100" Margin="0 0 20 0" Height="43" VerticalAlignment="Top"/>
+                <Button x:Name="resetPosStatus" Content="Reset PosStatus" FontSize="16" Margin="0 0 20 0" Click="resetPosStatus_Click"/>
+                <Button x:Name="Update_Firmware" Content="Firmware Update" FontSize="16" Click="firmwareUp_Click"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Content of the 4th row -->
         <!-- Contains the TextBox UI Element which will update with device response -->
-        <Border Padding="20 10 20 10" Grid.Row="3">
-            <TextBox x:Name="textResult" Grid.Row="3" Margin="20 15 20 20" TextWrapping="Wrap" Text="Operation Function result will be displayed here.." VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="16" IsReadOnly="True"/>
+        <Border Padding="20 10 20 10" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0.2,-0.4,0.2">
+            <StackPanel>
+                <ProgressBar Height="15" Grid.Row="3" HorizontalAlignment="Left" Margin="20,0,0,5" x:Name="Upgrade_Bar" Minimum="0" Maximum="100" VerticalAlignment="Top" Width="600" Foreground="#FF2EAFF1" />
+                <ScrollViewer HorizontalAlignment="Stretch" Margin="10,0,0,0" VerticalAlignment="Stretch" Height="160" Padding="0 0 20 0">
+                    <TextBox x:Name="textResult" Grid.Row="3"  TextWrapping="Wrap" Text="Operation Function result will be displayed here.."  FontSize="16" IsReadOnly="True"/>
+                </ScrollViewer>
+                
+            </StackPanel>
         </Border>
-        
+
         <!-- Content of the 5th row -->
         <!-- Contains the connection status bar -->
-        <Border x:Name="StatusBorder" Grid.Row="4" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="20,0,20,5" VerticalAlignment="Stretch">
+        <Border x:Name="StatusBorder" Grid.Row="3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="20,206.2,19.6,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.RowSpan="2">
             <StackPanel>
                 <TextBlock x:Name="StatusLabel" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Connection Status:" VerticalAlignment="Top" Width="340" FontSize="16"/>
                 <ScrollViewer HorizontalAlignment="Stretch" Margin="10,0,0,0" VerticalAlignment="Stretch" Height="40" Padding="0 0 20 0">
                     <TextBlock x:Name="StatusBlock" TextWrapping="Wrap" Text="Test" FontSize="16"/>
                 </ScrollViewer>
+                
             </StackPanel>
         </Border>
 

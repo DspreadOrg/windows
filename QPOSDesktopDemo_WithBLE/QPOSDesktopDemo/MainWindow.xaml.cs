@@ -18,6 +18,8 @@ using Windows.Devices.Enumeration;
 using SDK_LIB;
 using System.IO;
 using System.Threading;
+using System.ComponentModel;
+using System.Windows.Threading;
 
 namespace QPOSDesktopDemo
 {
@@ -26,6 +28,7 @@ namespace QPOSDesktopDemo
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        
         public MainWindow()
         {
             // Initialise UI Components and reset bunch of flags.
@@ -64,9 +67,8 @@ namespace QPOSDesktopDemo
             //scanSerial.IsEnabled = false;
             //ButtonConnectToUSBDevice.IsEnabled = false;
             //ButtonConnectToBTDevice.IsEnabled = false;
-
         }
-
+         
         private void scanSerial_Click(object sender, RoutedEventArgs e)
         {
             // Initialize the desired device watchers so that we can watch for when devices are connected/removed
@@ -257,6 +259,11 @@ namespace QPOSDesktopDemo
         private void update_firmware()
         {
             string file_name = "upgrader.asc";
+            if (!File.Exists(file_name))
+            {
+                Tip.d(file_name + " not find");
+                return;
+            }
             System.IO.FileStream fs = new FileStream(file_name, FileMode.Open);
             long size = fs.Length;
             fs.Seek(0, SeekOrigin.Begin);
@@ -294,6 +301,7 @@ namespace QPOSDesktopDemo
             return;
         }
 
+        
         private void getPosId_Click(object sender, RoutedEventArgs e)
         {
             pos.getQposId();
@@ -320,6 +328,11 @@ namespace QPOSDesktopDemo
             return;
         }
 
+        private void firmwareUp_Click(object sender, RoutedEventArgs e)
+        {
+            update_firmware();
+            return;
+        }
         private async void pairBluetooth_Click(object sender, RoutedEventArgs e)
         {
             if (!bleScanRunning)
@@ -398,6 +411,9 @@ namespace QPOSDesktopDemo
                 bleScanRunning = true;
                 NotifyUser($"Device watcher for bluetooth 4.0 device started.", NotifyType.StatusMessage);
             }
+
         }
+
+       
     }
 }

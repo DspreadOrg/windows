@@ -139,6 +139,7 @@ namespace QPOSDesktopDemo
         /// Private field to hold an instance of QPOSService Listener class
         /// </summary>
         private MyPosListener listener;
+        private MyProgressListener fwlistener;
         #endregion
 
         #endregion
@@ -836,7 +837,9 @@ namespace QPOSDesktopDemo
             System.Diagnostics.Debug.WriteLine(deviceInfo.Id);
             pos = QPOSService.getInstance(QPOSService.CommunicationMode.com);
             listener = new MyPosListener(pos, textResult);
+            fwlistener = new MyProgressListener(Upgrade_Bar, textResult);
             pos.initListener(listener);
+            pos.initFirmwareListener(fwlistener);
             Boolean openSuccess = pos.connectUSB(deviceInfo);
             if (openSuccess)
             {
@@ -1053,21 +1056,55 @@ namespace QPOSDesktopDemo
         #endregion
 
         #endregion
+        public void ProgressBegin()
+        {
 
+            Thread thread = new Thread(new ThreadStart(() =>
+            {
+                this.Upgrade_Bar.Dispatcher.BeginInvoke((ThreadStart)delegate { this.Upgrade_Bar.Value = pos.getUpdateProgress(); });
+                Thread.Sleep(100);
+
+            }));
+            thread.Start();
+        }
         #region Device Listener
+        private class MyProgressListener : QPOSService.Firmwarelistener
+        {
+            private ProgressBar pregress_Bar;
+            private TextBox txtDisplay;
+            
+            public MyProgressListener(ProgressBar FwProgress, TextBox txtDisplayResult)
+            {
+                pregress_Bar = FwProgress;
+                txtDisplay = txtDisplayResult;
+            }
+            async public void onReturnUpdateFirmwareProgress(int percentage)
+            {
+                await this.pregress_Bar.Dispatcher.InvokeAsync(() =>
+                {
+                    this.pregress_Bar.Value = percentage;
+                }, DispatcherPriority.Normal);
+                string content = "Loading: " + percentage + "%";
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+        }
         private class MyPosListener : QPOSService.QPOSServiceListener
         {
             private TextBox txtDisplay;
             private QPOSService pos;
+            
             public MyPosListener(QPOSService apos, TextBox txtDisplayResult)
             {
                 pos = apos;
                 txtDisplay = txtDisplayResult;
             }
-          
+
             public void onRequestSetAmount()
             {
-                amount = "0";
+                amount = "123";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
                 pos.setAmount(amount, cashbackAmount, "156", transactionType);
@@ -1673,9 +1710,8 @@ namespace QPOSDesktopDemo
 
                 return;
             }
-            async public void onReturnQrCodeResult(bool isSuccess)
+            async public void onReturnQrCodeResult(bool isSuccess, String result)
             {
-                String result=(isSuccess?"QrCode Success":"QrCode fail");
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
@@ -1712,7 +1748,7 @@ namespace QPOSDesktopDemo
 
             }
 
-            public void onReturniccCashBack(Dictionary<String, String> result)
+            public void onReturniccCashBack(Hashtable result)
             {
 
             }
@@ -1795,6 +1831,7 @@ namespace QPOSDesktopDemo
                 Debug.WriteLine("result : " + result);
                 return;
             }
+            
             async public void onReturnUpdateFirmwareResult(QPOSService.UpdateInformationResult result)
             {
                 String updateFirmware_result = "";
@@ -1863,9 +1900,9 @@ namespace QPOSDesktopDemo
 
             }
 
-            public void onReturniccCashBack(Hashtable result)
+            public void onReturniccCashBack(Dictionary<String,String> result)
             {
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
             }
             async public void onReturnSendDeviceCommandString(bool isSuccess)
             {
@@ -1885,6 +1922,165 @@ namespace QPOSDesktopDemo
                     content += "\n";
                     content += "recv:" + apduLen + "\n" + apdu;
                 }
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onSearchMifareCardResult(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onBatchReadMifareCardResult(string msg, Dictionary<String,String> cardData)
+            {
+                String content = msg +"\r\n";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onBatchWriteMifareCardResult(string msg, Dictionary<String,String> cardData)
+            {
+                String content = msg + "\r\n" ;
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onFinishMifareCardResult(bool flag)
+            {
+                throw new NotImplementedException();
+            }
+
+            async public void onVerifyMifareCardResult(bool flag)
+            {
+                
+            }
+
+            async public void onReadMifareCardResult(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void onWriteMifareCardResult(bool flag)
+            {
+                
+            }
+
+            async public void onOperateMifareCardResult(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void getMifareCardVersion(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void getMifareReadData(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void getMifareFastReadData(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void writeMifareULData(string cardData)
+            {
+                String content = cardData;
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void verifyMifareULData(Dictionary<String,String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+            }
+
+            async public void transferMifareData(string cardData)
+            {
+                String content = cardData;
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;

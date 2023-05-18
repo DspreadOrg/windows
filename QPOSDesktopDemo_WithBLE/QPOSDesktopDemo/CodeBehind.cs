@@ -1,44 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+#if WINDOWS_10
+using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
+using Windows.Networking.Connectivity;
+using Windows.Devices.SerialCommunication;
+#endif
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Media;
-using Windows.Foundation;
-using Windows.Networking.Connectivity;
-using Windows.Devices.SerialCommunication;
+
 using System.Diagnostics;
 using System.Collections;
 using System.Windows.Controls;
 using SDK_LIB;
+using System.Management;
+using System.IO.Ports;
 
 namespace QPOSDesktopDemo
 {
     public partial class MainWindow : Window
     {
+
         #region Private Fields
+        private static String[] Ports;
+        private static ManagementEventWatcher USBInsert;
+        private static ManagementEventWatcher USBRemove;
+        private static bool IsConnected;
         #region Member for Legacy Bluetooth Connection
         /// <summary>
         /// Private field that stores the device serial number for Legacy Bluetooth Connection
         /// </summary>
         private static string targetDeviceNo;
 
+        private static Dictionary<string, string> DeviceInfo;
+        private static DeviceInformation device=new DeviceInformation();
+       
+
         /// <summary>
         /// RfcommDeviceService object for establishing Bluetooth communication
         /// </summary>
+#if WINDOWS_10
         private RfcommDeviceService btDeviceService = null;
+#endif
         #endregion
 
         #region Member for Bluetooth 4.0 Device Connection
         /// <summary>
         /// Device Watcher object for BLE devices
         /// </summary>
+#if WINDOWS_10
         private DeviceWatcher deviceWatcherBLE;
+#endif
 
         /// <summary>
         /// Boolean flag to incidate scan result is obtained in BLE mode.
@@ -48,31 +66,38 @@ namespace QPOSDesktopDemo
         /// <summary>
         /// Store the Bluetooth 4.0 Device ID
         /// </summary>
-        private static string bleTargetDeviceId; 
+        private static string bleTargetDeviceId;
         #endregion
 
-        #region Members for device enumeration
-        /// <summary>
-        /// DeviceInformation Object used along with native device enumeration
-        /// </summary>
+#region Members for device enumeration
+/// <summary>
+/// DeviceInformation Object used along with native device enumeration
+/// </summary>
+#if WINDOWS_10
         private DeviceInformation deviceInfo;
+#endif
 
-        /// <summary>
-        /// ObservableCollection of list of DeviceListEntry object which will be
-        /// used for listing the connected USB and paired Bluetooth devices
-        /// </summary>
+/// <summary>
+/// ObservableCollection of list of DeviceListEntry object which will be
+/// used for listing the connected USB and paired Bluetooth devices
+/// </summary>
+#if WINDOWS_10
         private ObservableCollection<DeviceListEntry> listOfDevices;
+#endif
 
-        /// <summary>
-        /// Observable Collection for all discovered Bluetooth 4.0 Devices
-        /// </summary>
+
+/// <summary>
+/// Observable Collection for all discovered Bluetooth 4.0 Devices
+/// </summary>
+#if WINDOWS_10
         private ObservableCollection<BluetoothLEDeviceDisplay> ResultCollection = new ObservableCollection<BluetoothLEDeviceDisplay>();
-
-        /// <summary>
-        /// Dictionary used to map the DeviceWatcher object with the string
-        /// </summary>
+#endif
+/// <summary>
+/// Dictionary used to map the DeviceWatcher object with the string
+/// </summary>
+#if WINDOWS_10
         private Dictionary<DeviceWatcher, string> mapDeviceWatchersToDeviceSelector;
-
+#endif
         /// <summary>
         /// Private Boolean value to indicate if the device watcher is suspended.
         /// </summary>
@@ -95,41 +120,43 @@ namespace QPOSDesktopDemo
         private static bool deviceConnected = false;
 
 
-        #endregion
+#endregion
 
-        #region AutoEventHandler
+#region AutoEventHandler
         /// <summary>
         /// Used to synchronize execution and wait for Bluetooth device connection to firmly establish
         /// </summary>
         private static AutoResetEvent waitForBTConnectionResult = new AutoResetEvent(false);
-        #endregion
+#endregion
 
-        #region MainWindow Object
+#region MainWindow Object
         /// <summary>
         /// Used MainWindow Object that will be assigned to current Application
         /// It is required by the EventHandlerForDevice class
         /// </summary>
         public static MainWindow Current;
 
-        #endregion
+#endregion
 
-        #region Notification Messages
+#region Notification Messages
         private const String ButtonNameDisconnectFromDevice = "Disconnect from device";
         private const String ButtonNameDisableReconnectToDevice = "Do not automatically reconnect to device that was just closed";
         private const string connectionInProgress = "Connecting, please wait....";
         private const string promoteUserToStart = "Please start the demo by clicking the \"Scan Serial\\Legacy Bluetooth Device\" Button";
         #endregion
 
-        #region Computer Name Extraction for Bluetooth Device result filtering
-        // Before add device to the list, check if PC Bluetooth device is recognised as a new device.
-        // BTDevice on PC shares the same name as the PC name.
-        // Next three lines gather the current PC name.
+#region Computer Name Extraction for Bluetooth Device result filtering
+// Before add device to the list, check if PC Bluetooth device is recognised as a new device.
+// BTDevice on PC shares the same name as the PC name.
+// Next three lines gather the current PC name.
+#if WINDOWS_10
         private static IReadOnlyList<Windows.Networking.HostName> hostNames = NetworkInformation.GetHostNames();
         private static Windows.Networking.HostName localName = hostNames.FirstOrDefault(name => name.DisplayName.Contains(".local"));
         private static string computerName = localName.DisplayName.Replace(".local", "");
-        #endregion
+#endif
+#endregion
 
-        #region QPOS Services
+#region QPOS Services
         /// <summary>
         /// Private field to hold an instance of QPOSService class
         /// </summary>
@@ -139,32 +166,36 @@ namespace QPOSDesktopDemo
         /// Private field to hold an instance of QPOSService Listener class
         /// </summary>
         private MyPosListener listener;
-        private MyProgressListener fwlistener;
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
-        #region Call for System Bluetooth Settings Window
+#region Call for System Bluetooth Settings Window
         /// <summary>
         /// Task to open the System Bluetooth Settings Window
         /// </summary>
         /// <returns>Boolean Value to indicate if the task executes successfully</returns>
+#if WINDOWS_10
         public async Task<bool> OpenBluetoothSettings()
         {
+            bool result = false;
+
             bool result = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:bluetooth"));
+
             return result;
         }
-        #endregion
+#endif
+    #endregion
 
-        #region UpdateButtonsAndLists Methods
-        /// <summary>
-        /// This method will enable the type of button specified in the method
-        /// parameter
-        /// </summary>
-        /// <param name="buttonType">Type of the button that needs to be enabled</param>
-        private void UpdateConnectDisconnectButtonsAndList(ButtonType buttonType)
+    #region UpdateButtonsAndLists Methods
+    /// <summary>
+    /// This method will enable the type of button specified in the method
+    /// parameter
+    /// </summary>
+    /// <param name="buttonType">Type of the button that needs to be enabled</param>
+    private void UpdateConnectDisconnectButtonsAndList(ButtonType buttonType)
         {
             if (buttonType == ButtonType.ConnectButton)
             {
@@ -174,16 +205,20 @@ namespace QPOSDesktopDemo
                     // Check the current selection and enable the corresponding connection button
                     // If no selection made, disable both connection button
                     var selection = ConnectDevices.SelectedItems;
+             #if WINDOWS_10
                     DeviceListEntry entry = null;
+            #endif
                     string deviceType = null;
 
                     if (selection.Count > 0)
                     {
                         var obj = selection[0];
+             #if WINDOWS_10
                         entry = (DeviceListEntry)obj;
                         deviceType = entry.DeviceType;
+            #endif
                     }
-
+             #if WINDOWS_10
                     if (entry == null)
                     {
                         ButtonConnectToUSBDevice.IsEnabled = false;
@@ -192,6 +227,7 @@ namespace QPOSDesktopDemo
                         ConnectDevices.IsEnabled = true;
                         return;
                     }
+            #endif
 
                     if (deviceType == "Bluetooth Device")
                     {
@@ -234,9 +270,9 @@ namespace QPOSDesktopDemo
             ConnectButton,
             DisconnectButton
         }
-        #endregion
+#endregion
 
-        #region NotifyUser Method
+#region NotifyUser Method
         /// <summary>
         /// Enumeration of Available NotifyType
         /// </summary>
@@ -279,9 +315,9 @@ namespace QPOSDesktopDemo
                 StatusBorder.Visibility = Visibility.Collapsed;
             }
         }
-        #endregion
+#endregion
 
-        #region Start/Stop Serial/Bluetooth Legacy DeviceWatcher
+#region Start/Stop Serial/Bluetooth Legacy DeviceWatcher
         /// <summary>
         /// Initialize device watchers to watch for the Serial Devices.
         ///
@@ -293,7 +329,11 @@ namespace QPOSDesktopDemo
         {
 
             // Target all Serial Devices present on the system
+#if WINDOWS_10
             var deviceSelector = SerialDevice.GetDeviceSelector();
+
+
+
 
             // Other variations of GetDeviceSelector() usage are commented for reference
             //
@@ -314,6 +354,7 @@ namespace QPOSDesktopDemo
 
             // Allow the EventHandlerForDevice to handle device watcher events that relates or effects our device (i.e. device removal, addition, app suspension/resume)
             AddDeviceWatcher(deviceWatcher, deviceSelector);
+#endif
         }
 
         /// <summary>
@@ -321,15 +362,16 @@ namespace QPOSDesktopDemo
         /// </summary>
         /// <param name="deviceWatcher"></param>
         /// <param name="deviceSelector">The AQS used to create the device watcher</param>
+#if WINDOWS_10
         private void AddDeviceWatcher(DeviceWatcher deviceWatcher, String deviceSelector)
         {
             deviceWatcher.Added += new TypedEventHandler<DeviceWatcher, DeviceInformation>(this.OnDeviceAdded);
             deviceWatcher.Removed += new TypedEventHandler<DeviceWatcher, DeviceInformationUpdate>(this.OnDeviceRemoved);
             deviceWatcher.EnumerationCompleted += new TypedEventHandler<DeviceWatcher, Object>(this.OnDeviceEnumerationComplete);
-            
+
             mapDeviceWatchersToDeviceSelector.Add(deviceWatcher, deviceSelector);
         }
-        
+#endif
         /// <summary>
         /// Starts all device watchers including ones that have been individually stopped.
         /// </summary>
@@ -338,7 +380,7 @@ namespace QPOSDesktopDemo
             // Start all device watchers
             watchersStarted = true;
             isAllDevicesEnumerated = false;
-
+#if WINDOWS_10
             foreach (DeviceWatcher deviceWatcher in mapDeviceWatchersToDeviceSelector.Keys)
             {
                 if ((deviceWatcher.Status != DeviceWatcherStatus.Started)
@@ -346,8 +388,9 @@ namespace QPOSDesktopDemo
                 {
                     deviceWatcher.Start();
                 }
-                
+
             }
+#endif
         }
 
         /// <summary>
@@ -356,6 +399,7 @@ namespace QPOSDesktopDemo
         private void StopDeviceWatchers()
         {
             // Stop all device watchers
+#if WINDOWS_10
             foreach (DeviceWatcher deviceWatcher in mapDeviceWatchersToDeviceSelector.Keys)
             {
                 if ((deviceWatcher.Status == DeviceWatcherStatus.Started)
@@ -364,18 +408,20 @@ namespace QPOSDesktopDemo
                     deviceWatcher.Stop();
                 }
             }
+#endif
 
             // Clear the list of devices so we don't have potentially disconnected devices around
             ClearDeviceEntries();
 
             watchersStarted = false;
         }
-        #endregion
+#endregion
 
-        #region Start/Stop BLE DeviceWatcher
+#region Start/Stop BLE DeviceWatcher
 
         private void StopBleDeviceWatcher()
         {
+#if WINDOWS_10
             if (deviceWatcherBLE != null)
             {
                 // Unregister the event handlers.
@@ -389,6 +435,7 @@ namespace QPOSDesktopDemo
                 deviceWatcherBLE.Stop();
                 deviceWatcherBLE = null;
             }
+#endif
         }
 
         /// <summary>
@@ -399,7 +446,7 @@ namespace QPOSDesktopDemo
         {
             // Additional properties we would like about the device.
             string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected" };
-
+#if WINDOWS_10
             // BT_Code: Currently Bluetooth APIs don't provide a selector to get ALL devices that are both paired and non-paired.
             deviceWatcherBLE =
                     DeviceInformation.CreateWatcher(
@@ -419,8 +466,9 @@ namespace QPOSDesktopDemo
 
             // Start the watcher.
             deviceWatcherBLE.Start();
+#endif
         }
-
+#if WINDOWS_10
         private BluetoothLEDeviceDisplay FindBluetoothLEDeviceDisplay(string id)
         {
             foreach (BluetoothLEDeviceDisplay bleDeviceDisplay in ResultCollection)
@@ -432,7 +480,8 @@ namespace QPOSDesktopDemo
             }
             return null;
         }
-
+#endif
+#if WINDOWS_10
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
@@ -482,7 +531,7 @@ namespace QPOSDesktopDemo
                         ResultCollection.Remove(bleDeviceDisplay);
                     }
                 }
-            },DispatcherPriority.Normal);
+            }, DispatcherPriority.Normal);
         }
 
         private async void DeviceWatcher_EnumerationCompleted(DeviceWatcher sender, object e)
@@ -496,7 +545,7 @@ namespace QPOSDesktopDemo
                     NotifyUser($"{ResultCollection.Count} devices found. Enumeration completed.",
                         NotifyType.StatusMessage);
                 }
-            },DispatcherPriority.Normal);
+            }, DispatcherPriority.Normal);
         }
 
         private async void DeviceWatcher_Stopped(DeviceWatcher sender, object e)
@@ -510,21 +559,23 @@ namespace QPOSDesktopDemo
                     NotifyUser($"No longer watching for devices.",
                             sender.Status == DeviceWatcherStatus.Aborted ? NotifyType.ErrorMessage : NotifyType.StatusMessage);
                 }
-            },DispatcherPriority.Normal);
+            }, DispatcherPriority.Normal);
         }
-        #endregion
+#endif
+#endregion
 
-        #region DeviceWatcher Related events
-        /// <summary>
-        /// This function will add the device to the listOfDevices so that it shows up in the UI
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="deviceInformation"></param>
+#region DeviceWatcher Related events
+/// <summary>
+/// This function will add the device to the listOfDevices so that it shows up in the UI
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="deviceInformation"></param>
+#if WINDOWS_10
         private async void OnDeviceAdded(DeviceWatcher sender, DeviceInformation deviceInformation)
         {
             await Dispatcher.InvokeAsync(
                 new Action(() =>
-               {
+                {
 
                     if (deviceInformation.Name != computerName)
                     {
@@ -539,22 +590,22 @@ namespace QPOSDesktopDemo
                         {
                             // Used to filter out virtualised USB port so only one USB connection will be enumerated.
                             var usbFilterStr = deviceInformation.Id.Substring(8, 23);
-                           Console.WriteLine("deviceInformation.Id="+ deviceInformation.Id);
+                            Console.WriteLine("deviceInformation.Id=" + deviceInformation.Id);
                             if (usbFilterStr.Substring(usbFilterStr.Length - 2, 2) == "00" || deviceInformation.Id.Contains("VID_0E8D"))
                             {
                                 NotifyUser("USB Device added - Device Name: " + deviceInformation.Name, NotifyType.StatusMessage);
                                 AddDeviceToList(deviceInformation, mapDeviceWatchersToDeviceSelector[sender]);
-                               // Boolean openSuccess = await OpenDeviceAsync(deviceInformation, "com3");
-                               //if (openSuccess)
-                               //{
-                               //    Debug.WriteLine("OK");
-                               //}
-                               //else
-                               //{
-                               //    Debug.WriteLine("NG");
-                               //}
-                           }
-                       }
+                                // Boolean openSuccess = await OpenDeviceAsync(deviceInformation, "com3");
+                                //if (openSuccess)
+                                //{
+                                //    Debug.WriteLine("OK");
+                                //}
+                                //else
+                                //{
+                                //    Debug.WriteLine("NG");
+                                //}
+                            }
+                        }
                         else
                         {
                             NotifyUser("Device added - " + deviceInformation.Name, NotifyType.StatusMessage);
@@ -564,14 +615,15 @@ namespace QPOSDesktopDemo
 
                     }
 
-                }),DispatcherPriority.Normal);
+                }), DispatcherPriority.Normal);
         }
-
-        /// <summary>
-        /// We will remove the device from the UI
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="deviceInformationUpdate"></param>
+#endif
+/// <summary>
+/// We will remove the device from the UI
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="deviceInformationUpdate"></param>
+#if WINDOWS_10
         private async void OnDeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate deviceInformationUpdate)
         {
             await Dispatcher.InvokeAsync(
@@ -600,12 +652,13 @@ namespace QPOSDesktopDemo
 
                 }), DispatcherPriority.Normal);
         }
-
-        /// <summary>
-        /// Notify the UI whether or not we are connected to a device
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+#endif
+/// <summary>
+/// Notify the UI whether or not we are connected to a device
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="args"></param>
+#if WINDOWS_10
         private async void OnDeviceEnumerationComplete(DeviceWatcher sender, Object args)
         {
             await Dispatcher.InvokeAsync(
@@ -647,13 +700,14 @@ namespace QPOSDesktopDemo
                     }
                 }), DispatcherPriority.Normal);
         }
-
-        /// <summary>
-        /// If all the devices have been enumerated, select the device in the list we connected to. Otherwise let the EnumerationComplete event
-        /// from the device watcher handle the device selection
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="deviceInformation"></param>
+#endif
+/// <summary>
+/// If all the devices have been enumerated, select the device in the list we connected to. Otherwise let the EnumerationComplete event
+/// from the device watcher handle the device selection
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="deviceInformation"></param>
+#if WINDOWS_10
         private void OnDeviceConnected(EventHandlerForDevice sender, DeviceInformation deviceInformation)
         {
             // Find and select our connected device
@@ -677,12 +731,13 @@ namespace QPOSDesktopDemo
                                     EventHandlerForDevice.Current.DeviceInformation.Id, NotifyType.StatusMessage);
             }
         }
-
-        /// <summary>
-        /// The device was closed. If we will autoreconnect to the device, reflect that in the UI
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="deviceInformation"></param>
+#endif
+/// <summary>
+/// The device was closed. If we will autoreconnect to the device, reflect that in the UI
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="deviceInformation"></param>
+#if WINDOWS_10
         private async void OnDeviceClosing(EventHandlerForDevice sender, DeviceInformation deviceInformation)
         {
             await Dispatcher.InvokeAsync(
@@ -694,18 +749,20 @@ namespace QPOSDesktopDemo
                     {
                         ButtonDisconnectFromDevice.Content = ButtonNameDisableReconnectToDevice;
                     }
-                }),DispatcherPriority.Normal);
+                }), DispatcherPriority.Normal);
         }
-        #endregion
+#endif
+#endregion
 
-        #region DeviceList Manipulation Methods
+#region DeviceList Manipulation Methods
 
-        /// <summary>
-        /// Searches through the existing list of devices for the first DeviceListEntry that has
-        /// the specified device Id.
-        /// </summary>
-        /// <param name="deviceId">Id of the device that is being searched for</param>
-        /// <returns>DeviceListEntry that has the provided Id; else a nullptr</returns>
+/// <summary>
+/// Searches through the existing list of devices for the first DeviceListEntry that has
+/// the specified device Id.
+/// </summary>
+/// <param name="deviceId">Id of the device that is being searched for</param>
+/// <returns>DeviceListEntry that has the provided Id; else a nullptr</returns>
+#if WINDOWS_10
         private DeviceListEntry FindDevice(String deviceId)
         {
             if (deviceId != null)
@@ -721,12 +778,13 @@ namespace QPOSDesktopDemo
 
             return null;
         }
-        
-        /// <summary>
-        /// Creates a DeviceListEntry for a device and adds it to the list of devices in the UI
-        /// </summary>
-        /// <param name="deviceInformation">DeviceInformation on the device to be added to the list</param>
-        /// <param name="deviceSelector">The AQS used to find this device</param>
+#endif
+/// <summary>
+/// Creates a DeviceListEntry for a device and adds it to the list of devices in the UI
+/// </summary>
+/// <param name="deviceInformation">DeviceInformation on the device to be added to the list</param>
+/// <param name="deviceSelector">The AQS used to find this device</param>
+#if WINDOWS_10
         private void AddDeviceToList(DeviceInformation deviceInformation, String deviceSelector)
         {
             // search the device list for a device with a matching interface ID
@@ -748,11 +806,12 @@ namespace QPOSDesktopDemo
 
             }
         }
-
-        /// <summary>
-        /// Remove the device from device list
-        /// </summary>
-        /// <param name="deviceId"></param>
+#endif
+/// <summary>
+/// Remove the device from device list
+/// </summary>
+/// <param name="deviceId"></param>
+#if WINDOWS_10
         private void RemoveDeviceFromList(String deviceId)
         {
             // Removes the device entry from the interal list; therefore the UI
@@ -760,13 +819,15 @@ namespace QPOSDesktopDemo
 
             listOfDevices.Remove(deviceEntry);
         }
-
+#endif
         /// <summary>
         /// Clear the device list that will be used to display on the UI.
         /// </summary>
         private void ClearDeviceEntries()
         {
+#if WINDOWS_10
             listOfDevices.Clear();
+#endif
         }
 
         /// <summary>
@@ -778,7 +839,7 @@ namespace QPOSDesktopDemo
         {
             // Don't select anything by default.
             ConnectDevices.SelectedIndex = -1;
-
+#if WINDOWS_10
             for (int deviceListIndex = 0; deviceListIndex < listOfDevices.Count; deviceListIndex++)
             {
                 if (listOfDevices[deviceListIndex].DeviceInformation.Id == deviceIdToSelect)
@@ -788,6 +849,7 @@ namespace QPOSDesktopDemo
                     break;
                 }
             }
+#endif
         }
 
         #endregion
@@ -798,6 +860,7 @@ namespace QPOSDesktopDemo
         /// </summary>
         /// <param name="blueToothAddress">QPOS Hardware Serial Number</param>
         /// <returns></returns>
+#if WINDOWS_10
         async Task findBTD(String blueToothAddress)
         {
             btDeviceService = null;
@@ -816,6 +879,7 @@ namespace QPOSDesktopDemo
 
             return;
         }
+#endif
         #endregion
 
         #region USB Device Open Async Method
@@ -832,15 +896,66 @@ namespace QPOSDesktopDemo
         /// <param name="deviceSelector">The AQS used to find this device</param>
         /// <returns>True if the device was successfully opened, false if the device could not be opened for well known reasons.
         /// An exception may be thrown if the device could not be opened for extraordinary reasons.</returns>
-        public async Task<Boolean> OpenDeviceAsync(DeviceInformation deviceInfo, String deviceSelector)
+        public bool OpenDeviceAsync(String port)
         {
-            System.Diagnostics.Debug.WriteLine(deviceInfo.Id);
+            Boolean openSuccess = false;
+            Tip.d("OpenDeviceAsync: connnect by com port: "+ port);
             pos = QPOSService.getInstance(QPOSService.CommunicationMode.com);
             listener = new MyPosListener(pos, textResult);
-            fwlistener = new MyProgressListener(Upgrade_Bar, textResult);
             pos.initListener(listener);
-            pos.initFirmwareListener(fwlistener);
-            Boolean openSuccess = pos.connectUSB(deviceInfo);
+            openSuccess = pos.connectUSB(port);
+
+            if (openSuccess)
+            {
+                Tip.d("OK");
+                //pos.getQposId();
+            }
+            else
+            {
+                Tip.d("NG");
+            }
+            //device = await SerialDevice.FromIdAsync(deviceInfo.Id);
+            //device= await SerialDevice.get
+            Boolean successfullyOpenedDevice = false;
+            MainWindow.NotifyType notificationStatus;
+            String notificationMessage = null;
+            String device_name = DeviceInfo["Device_name"];
+            // Device could have been blocked by user or the device has already been opened by another app.
+            if (openSuccess)
+            {
+                successfullyOpenedDevice = true;
+
+                //this.deviceInfo = deviceInfo;
+                //this.deviceSelector = deviceSelector;
+
+                notificationStatus = NotifyType.StatusMessage;
+                notificationMessage = "Device " + device_name + " is connected via Serial Communication Method.";
+            }
+            else
+            {
+                successfullyOpenedDevice = false;
+
+                notificationStatus = NotifyType.ErrorMessage;
+
+                notificationMessage = "Access to the device was blocked by the system : " + device_name;
+            }
+
+            MainWindow.Current.NotifyUser(notificationMessage, notificationStatus);
+
+            return successfullyOpenedDevice;
+        }
+#if WINDOWS_10
+        public async Task<Boolean> OpenDeviceAsync(DeviceInformation deviceInfo, String deviceSelector)
+        {
+            Boolean openSuccess=false;
+
+            Tip.d("OpenDeviceAsync: connnect by deviceInfo");
+            pos = QPOSService.getInstance(QPOSService.CommunicationMode.DEV_INFO);
+            listener = new MyPosListener(pos, textResult);
+            pos.initListener(listener);
+            openSuccess = pos.connectUSB(deviceInfo);
+
+
             if (openSuccess)
             {
                 Debug.WriteLine("OK");
@@ -895,9 +1010,10 @@ namespace QPOSDesktopDemo
 
             return successfullyOpenedDevice;
         }
-        #endregion
+#endif
+#endregion
 
-        #region Pairing
+#region Pairing
         /// <summary>
         /// Boolean flag to prevent multiple executions while one execution is currently in progress
         /// </summary>
@@ -905,6 +1021,7 @@ namespace QPOSDesktopDemo
         /// <summary>
         /// Pairing Method
         /// </summary>
+#if WINDOWS_10
         private async Task<bool> blePairing(BluetoothLEDeviceDisplay btLEDeviceItem)
         {
             // Do not allow a new Pair operation to start if an existing one is in progress.
@@ -924,10 +1041,12 @@ namespace QPOSDesktopDemo
 
             return status;
         }
-
+#endif
+#if WINDOWS_10
         private async void Pairing()
         {
             var selection = ConnectDevices.SelectedItems;
+
             BluetoothLEDeviceDisplay entry = null;
             if (selection.Count > 0)
             {
@@ -942,13 +1061,17 @@ namespace QPOSDesktopDemo
                     "Bluetooth 4.0 Device: " + entry.Name + " failed to pair.";
                 NotifyUser(message, messageType);
             }
-        }
+
+    }
+#endif
 
         #endregion
 
         #region Legacy Bluetooth Device Connection
+#if WINDOWS_10
         async private void ConnectToBTLegacyDevice()
         {
+
             var selection = ConnectDevices.SelectedItems;
             DeviceListEntry entry = null;
 
@@ -1001,7 +1124,9 @@ namespace QPOSDesktopDemo
                 waitForBTConnectionResult.Reset();
                 pos.disConnectFull();
             }
+
         }
+#endif
         #endregion
 
         #region Bluetooth 4.0 Device Connection
@@ -1011,8 +1136,10 @@ namespace QPOSDesktopDemo
         /// </summary>
         /// <param name="sender">Button object</param>
         /// <param name="e">Additional Event args</param>
+#if WINDOWS_10
         private async void ConnectToBLEDevice()
         {
+
             StopBleDeviceWatcher();
             var selection = ConnectDevices.SelectedItems;
             BluetoothLEDeviceDisplay entry = null;
@@ -1052,50 +1179,18 @@ namespace QPOSDesktopDemo
                 waitForBTConnectionResult.Reset();
                 pos.disConnectFull();
             }
-        }
+
+    }
+#endif
         #endregion
 
         #endregion
-        public void ProgressBegin()
-        {
 
-            Thread thread = new Thread(new ThreadStart(() =>
-            {
-                this.Upgrade_Bar.Dispatcher.BeginInvoke((ThreadStart)delegate { this.Upgrade_Bar.Value = pos.getUpdateProgress(); });
-                Thread.Sleep(100);
-
-            }));
-            thread.Start();
-        }
         #region Device Listener
-        private class MyProgressListener : QPOSService.Firmwarelistener
-        {
-            private ProgressBar pregress_Bar;
-            private TextBox txtDisplay;
-            
-            public MyProgressListener(ProgressBar FwProgress, TextBox txtDisplayResult)
-            {
-                pregress_Bar = FwProgress;
-                txtDisplay = txtDisplayResult;
-            }
-            async public void onReturnUpdateFirmwareProgress(int percentage)
-            {
-                await this.pregress_Bar.Dispatcher.InvokeAsync(() =>
-                {
-                    this.pregress_Bar.Value = percentage;
-                }, DispatcherPriority.Normal);
-                string content = "Loading: " + percentage + "%";
-                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }, DispatcherPriority.Normal);
-            }
-        }
         private class MyPosListener : QPOSService.QPOSServiceListener
         {
             private TextBox txtDisplay;
             private QPOSService pos;
-            
             public MyPosListener(QPOSService apos, TextBox txtDisplayResult)
             {
                 pos = apos;
@@ -1104,13 +1199,13 @@ namespace QPOSDesktopDemo
 
             public void onRequestSetAmount()
             {
-                amount = "123";
+                amount = "0";
                 cashbackAmount = "66";
                 QPOSService.TransactionType transactionType = QPOSService.TransactionType.GOODS;
                 pos.setAmount(amount, cashbackAmount, "156", transactionType);
             }
 
-            async public void onError(QPOSService.Error errorState)
+            public void onError(QPOSService.Error errorState)
             {
                 String strMsg = "";
                 if (errorState == QPOSService.Error.CMD_NOT_AVAILABLE)
@@ -1185,15 +1280,29 @@ namespace QPOSDesktopDemo
                 {
                     strMsg = "write or read data error!";
                 }
-                //txtDisplay.Text = strMsg;
-                //this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = strMsg;
+                }));
+
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = strMsg;
                 }, DispatcherPriority.Normal);
+#endif
             }
-
-            async public void onRequestDisplay(QPOSService.Display displayMsg)
+            public void onRequestReset(bool result)
+            {
+                String msg = (result ? "reset success" : "reset fail");
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = msg;
+                }));
+            }
+            public void onRequestDisplay(QPOSService.Display displayMsg)
             {
                 String msg = "";
                 if (displayMsg == QPOSService.Display.CLEAR_DISPLAY_MSG)
@@ -1280,20 +1389,21 @@ namespace QPOSDesktopDemo
                 {
                     msg = "Apdu error,retap card";
                 }
-                /*
+
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
                     this.txtDisplay.Text = msg;
                 }));
-                */
+
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = msg;
                 }, DispatcherPriority.Normal);
-
+#endif
                 // txtDisplay.Text = msg;
             }
-            
+
             private string PacketTradeResultData(Dictionary<String, String> McrHash)
             {
                 string result = "";
@@ -1307,7 +1417,7 @@ namespace QPOSDesktopDemo
                 }
                 return result;
             }
-            async public void onDoTradeResult(QPOSService.DoTradeResult result, Dictionary<String, String> decodeData)
+            public void onDoTradeResult(QPOSService.DoTradeResult result, Dictionary<String, String> decodeData)
             {
                 String content = "";
                 if (result == QPOSService.DoTradeResult.NONE)
@@ -1329,7 +1439,7 @@ namespace QPOSDesktopDemo
                 }
                 else if (result == QPOSService.DoTradeResult.PLAIN_TRACK)
                 {
-                    content= "\ncard_swiped: " + "\n";
+                    content = "\ncard_swiped: " + "\n";
                     content += PacketTradeResultData(decodeData);
                 }
                 else if (result == QPOSService.DoTradeResult.ManulEnc)
@@ -1345,8 +1455,8 @@ namespace QPOSDesktopDemo
                 }
                 else if ((result == QPOSService.DoTradeResult.NFC_ONLINE) || (result == QPOSService.DoTradeResult.NFC_OFFLINE))
                 {
-                    content = "\ntap card: "+"\n";
-                    content+=PacketTradeResultData(decodeData);
+                    content = "\ntap card: " + "\n";
+                    content += PacketTradeResultData(decodeData);
                     pos.sendNfcProcessResult("8A02303091100102030405060708000000000000000072189F180400000001860F8C2400000A8E081122334455667788");
 
                 }
@@ -1366,24 +1476,24 @@ namespace QPOSDesktopDemo
                 {
                     content = "please insert or swipe";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
                     this.txtDisplay.Text = content;
-                },DispatcherPriority.Normal);
+                }, DispatcherPriority.Normal);
+#endif
 
-                /*
-               this.txtDisplay.Dispatcher.Invoke(new Action(() =>
-               {
-                   this.txtDisplay.Text = content;
-               }));
-               */
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+
             }
 
             public void onRequestSelectEmvApp(List<String> appList)
             {
-                //pos.selectEmvApp(0);  
+                pos.selectEmvApp(0);
             }
 
             public void onRequestFinalConfirm()
@@ -1404,36 +1514,55 @@ namespace QPOSDesktopDemo
                 }
                 */
             }
-            async public void onRequestException()
+            public void onRequestException()
             {
                 String msg = "select app timeout";
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = msg;
+                }));
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
                     this.txtDisplay.Text = msg;
                 }, DispatcherPriority.Normal);
+#endif
             }
-            async public void onCvmPinResult(Dictionary<String, String> cvmpinData)
+            public void onCvmPinResult(Dictionary<String, String> cvmpinData)
             {
                 string content = "";
                 content = PacketTradeResultData(cvmpinData);
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
 
             }
-            async public void onQposInfoResult(Dictionary<String, String> posInfoData)
+            public void onQposInfoResult(Dictionary<String, String> posInfoData)
             {
                 String content = "";
                 content = PacketTradeResultData(posInfoData);
 
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     //this.txtDisplay.Text = msg;
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
 
             }
 
@@ -1444,7 +1573,7 @@ namespace QPOSDesktopDemo
                 Dictionary<String, String> hashtable = new Dictionary<String, String>();
                 //pos.selectEmvApp(0);
                 hashtable = pos.getICCTag(0, 1, "57");
-                
+
                 Tip.d("57=" + hashtable["tlv"] + "\r\n");
                 //pos.sendOnlineProcessResult("8A023035");
                 pos.sendOnlineProcessResult("8A025A33");
@@ -1465,15 +1594,22 @@ namespace QPOSDesktopDemo
                 pos.isServerConnected(true);
             }
 
-            async public void onRequestTime()
+            public void onRequestTime()
             {
                 String terminalTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 pos.sendTime(terminalTime);
                 //txtDisplay.Text = "onRequestTime : " + terminalTime;
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = "onRequestTime : " + terminalTime;
+                }));
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = "onRequestTime : " + terminalTime;
                 }, DispatcherPriority.Normal);
+#endif
                 /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
@@ -1572,39 +1708,41 @@ namespace QPOSDesktopDemo
                 // MessageBox.Show(message, "TransResult:", MessageBoxButton.OK);
             }
 
-            async public void onRequestTransactionLog(String tlv)
+            public void onRequestTransactionLog(String tlv)
             {
                 String content = "transaction_log: \n";
                 content += tlv;
-                /*
-                //this.txtDisplay.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }));
-                */
 
-                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }, DispatcherPriority.Normal);
-
-            }
-
-            async public void onRequestBatchData(String tlv)
-            {
-                String content = "batch_data: \n";
-                content += tlv;
-                //txtDisplay.Text = content;
-                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }, DispatcherPriority.Normal);
-                /*
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
                     this.txtDisplay.Text = content;
                 }));
-                */
+
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+            }
+
+            public void onRequestBatchData(String tlv)
+            {
+                String content = "batch_data: \n";
+                content += tlv;
+                //txtDisplay.Text = content;
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+
             }
             private string TransactionResultReturn(QPOSService.TransactionResult type)
             {
@@ -1612,7 +1750,7 @@ namespace QPOSDesktopDemo
                 switch (type)
                 {
                     case QPOSService.TransactionResult.APPROVED:
-                        result= "APPROVED";
+                        result = "APPROVED";
                         break;
                     case QPOSService.TransactionResult.DECLINED:
                         result = "DECLINED";
@@ -1643,53 +1781,64 @@ namespace QPOSDesktopDemo
                 result += "\nTlv_data:";
                 return result;
             }
-            async public void onRequestNFCBatchData(QPOSService.TransactionResult type,String tlv)
+            public void onRequestNFCBatchData(QPOSService.TransactionResult type, String tlv)
             {
                 String content = "transaction result:   ";
                 content += TransactionResultReturn(type);
                 content += tlv;
                 //txtDisplay.Text = content;
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
-                /*
+#endif
+
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
                     this.txtDisplay.Text = content;
                 }));
-                */
+
             }
-            public void onRequestQposConnected()
+            
+             public  void onRequestQposConnected()
             {
+                
                 MainWindow.deviceConnected = true;
-                waitForBTConnectionResult.Set();
+                Tip.d("onRequestQposConnected-connected");
+                //waitForBTConnectionResult.Set();
+                pos.getSdkVersion();
+                pos.getQposId();
+
             }
 
             public void onRequestQposDisconnected()
             {
-                Tip.d("onRequestQposConnected-connected");
+                Tip.d("onRequestQposDisconnected-disconnected");
             }
 
             public void onRequestNoQposDetected()
             {
                 MainWindow.deviceConnected = false;
                 waitForBTConnectionResult.Set();
+                Tip.d("onRequestNoQposDetected....");
             }
 
-            async public void onRequestWaitingUser()
+             public void onRequestWaitingUser()
             {
-                /*
+
                 // txtDisplay.Text = "please input/swap the card";
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
-                    this.txtDisplay.Text = "please input/swap the card";
+                    this.txtDisplay.Text = "please input/swap/tap the card";
                 }));
-                */
+
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = "please input/swap/tap the card";
-                },DispatcherPriority.Normal);
+                }, DispatcherPriority.Normal);
+#endif
             }
 
             public void onRequestSetPin()
@@ -1701,43 +1850,64 @@ namespace QPOSDesktopDemo
                 pos.sendCvmPin("1234", false);
             }
 
-            async public void onReturnCustomConfigResult(bool isSuccess, String result)
+             public void onReturnCustomConfigResult(bool isSuccess, String result)
             {
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
                 }, DispatcherPriority.Normal);
-
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = result;
+                }));
                 return;
             }
-            async public void onReturnQrCodeResult(bool isSuccess, String result)
+             public void onReturnQrCodeResult(bool isSuccess, String result)
             {
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
                 }, DispatcherPriority.Normal);
-
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = result;
+                }));
                 return;
             }
-            async public void onReturnUpdateFirmwareResult(bool isSuccess, String result)
+             public void onReturnUpdateFirmwareResult(bool isSuccess, String result)
             {
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
                 }, DispatcherPriority.Normal);
+#endif
 
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = result;
+                }));
                 return;
             }
-            async public void onReturnUpdateEmvConfigResult(bool isSuccess, String result)
+             public void onReturnUpdateEmvConfigResult(bool isSuccess, String result)
             {
+#if WINIDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = result;
                 }, DispatcherPriority.Normal);
-
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = result;
+                }));
                 return;
             }
-            
+
             public void onRequestCalculateMac(String calMac)
             {
 
@@ -1778,61 +1948,102 @@ namespace QPOSDesktopDemo
 
             }
 
-            async public void onReturnPowerOffNFCResult(bool isSuccess)
+             public void onReturnPowerOffNFCResult(bool isSuccess)
             {
                 String content = "NFC power_off:";
                 content += (isSuccess ? "SUCCESS" : "Fail");
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onReturnPowerOnNFCResult(bool isSuccess, String ksn, String atr, int atrLen)
+             public void onReturnPowerOnNFCResult(bool isSuccess, String ksn, String atr, int atrLen)
             {
                 String content = "NFC power_on:";
                 content += (isSuccess ? "SUCCESS" : "Fail");
                 content += "\n";
                 content += "ksn:" + ksn + "\n" + "ATR " + "(" + atrLen + "): " + atr;
-              
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onReturnGetPinResult(Dictionary<String, String> result)
+             public void onReturnGetPinResult(Dictionary<String, String> result)
             {
                 String content = "get pin result\n";
                 content += PacketTradeResultData(result);
 
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onReturnReversalData(String tlv)
+             public void onReturnReversalData(String tlv)
             {
                 Tip.d("onRequestBatchData-\r\n");
                 String content = "ReversalData\n";
 
                 content += tlv;
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
 
             }
 
-            public void onRequestUpdateWorkKeyResult(QPOSService.UpdateInformationResult result)
+             public void onRequestUpdateWorkKeyResult(QPOSService.UpdateInformationResult result)
             {
-                Debug.WriteLine("result : " + result);
-                return;
+                String content = "Fail";
+                switch (result)
+                {
+                    case QPOSService.UpdateInformationResult.UPDATE_SUCCESS:
+                        content = "Success";
+                        break;
+                    default:
+                        break;
+                }
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
-            
-            async public void onReturnUpdateFirmwareResult(QPOSService.UpdateInformationResult result)
+             public void onReturnUpdateFirmwareResult(QPOSService.UpdateInformationResult result)
             {
                 String updateFirmware_result = "";
                 String content = "";
@@ -1855,10 +2066,17 @@ namespace QPOSDesktopDemo
                         break;
                 }
                 content += "Firmware Update status: " + updateFirmware_result + "\n";
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
             public void onRequestSignatureResult(byte[] paras)
@@ -1866,7 +2084,7 @@ namespace QPOSDesktopDemo
 
             }
 
-            async public void onQposIdResult(Dictionary<String, String> posIdTable)
+             public void onQposIdResult(Dictionary<String, String> posIdTable)
             {
                 String posId = posIdTable["posId"] == null ? "" : posIdTable["posId"];
 
@@ -1875,46 +2093,73 @@ namespace QPOSDesktopDemo
                 Tip.d("onQposIdResult---->>");
                 //content += "posId: " + posId + "\n";
 
-                /*
+
                 this.txtDisplay.Dispatcher.Invoke(new Action(() =>
                 {
                     this.txtDisplay.Text = content;
                 }));
-                */
+
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
 
             }
-            async public void onQposRSAResult(String rsaPubkey)
+             public void onQposRSAResult(String rsaPubkey)
             {
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = rsaPubkey;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = rsaPubkey;
+                }));
             }
 
-            public void onReturnSetMasterKeyResult(bool isSuccess)
+             public void onReturnSetMasterKeyResult(bool isSuccess)
             {
-
-            }
-
-            public void onReturniccCashBack(Dictionary<String,String> result)
-            {
-                //throw new NotImplementedException();
-            }
-            async public void onReturnSendDeviceCommandString(bool isSuccess)
-            {
-                String content=(isSuccess ? "SUCCESS":"FAIL");
+                String content = (isSuccess ? "SUCCESS" : "FAIL");
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+            }
+
+            public void onReturniccCashBack(Dictionary<String, String> result)
+            {
+                //throw new NotImplementedException();
+            }
+            public void onReturnSendDeviceCommandString(bool isSuccess)
+            {
+                String content = (isSuccess ? "SUCCESS" : "FAIL");
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
 
             }
 
-            async public void onReturnANFCpduResult(bool isSuccess, string apdu, int apduLen)
+            public void onReturnANFCpduResult(bool isSuccess, string apdu, int apduLen)
             {
                 String content = (isSuccess ? "SUCCESS" : "FAIL");
                 if (isSuccess)
@@ -1922,173 +2167,267 @@ namespace QPOSDesktopDemo
                     content += "\n";
                     content += "recv:" + apduLen + "\n" + apdu;
                 }
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onSearchMifareCardResult(Dictionary<String,String> cardData)
+             public void onSearchMifareCardResult(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onBatchReadMifareCardResult(string msg, Dictionary<String,String> cardData)
+             public void onBatchReadMifareCardResult(string msg, Dictionary<String, String> cardData)
             {
-                String content = msg +"\r\n";
+                String content = msg + "\r\n";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onBatchWriteMifareCardResult(string msg, Dictionary<String,String> cardData)
+             public void onBatchWriteMifareCardResult(string msg, Dictionary<String, String> cardData)
             {
-                String content = msg + "\r\n" ;
+                String content = msg + "\r\n";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void onFinishMifareCardResult(bool flag)
+             public void onFinishMifareCardResult(bool flag)
             {
                 throw new NotImplementedException();
             }
 
-            async public void onVerifyMifareCardResult(bool flag)
+             public void onVerifyMifareCardResult(bool flag)
             {
-                
+
             }
 
-            async public void onReadMifareCardResult(Dictionary<String,String> cardData)
-            {
-                String content = "";
-                foreach (KeyValuePair<string, string> keyValues in cardData)
-                {
-                    content += keyValues.Key + " : " + keyValues.Value + ", ";
-                }
-
-                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
-                {
-                    this.txtDisplay.Text = content;
-                }, DispatcherPriority.Normal);
-            }
-
-            async public void onWriteMifareCardResult(bool flag)
-            {
-                
-            }
-
-            async public void onOperateMifareCardResult(Dictionary<String,String> cardData)
+             public void onReadMifareCardResult(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void getMifareCardVersion(Dictionary<String,String> cardData)
+             public void onWriteMifareCardResult(bool flag)
+            {
+
+            }
+
+             public void onOperateMifareCardResult(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void getMifareReadData(Dictionary<String,String> cardData)
+             public void getMifareCardVersion(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void getMifareFastReadData(Dictionary<String,String> cardData)
+             public void getMifareReadData(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void writeMifareULData(string cardData)
+             public void getMifareFastReadData(Dictionary<String, String> cardData)
+            {
+                String content = "";
+                foreach (KeyValuePair<string, string> keyValues in cardData)
+                {
+                    content += keyValues.Key + " : " + keyValues.Value + ", ";
+                }
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+            }
+
+             public void writeMifareULData(string cardData)
             {
                 String content = cardData;
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void verifyMifareULData(Dictionary<String,String> cardData)
+             public void verifyMifareULData(Dictionary<String, String> cardData)
             {
                 String content = "";
                 foreach (KeyValuePair<string, string> keyValues in cardData)
                 {
                     content += keyValues.Key + " : " + keyValues.Value + ", ";
                 }
-
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
 
-            async public void transferMifareData(string cardData)
+             public void transferMifareData(string cardData)
             {
                 String content = cardData;
+#if WINDOWS_10
                 await this.txtDisplay.Dispatcher.InvokeAsync(() =>
                 {
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
+            }
+
+             public void onGetKeyCheckValue(ArrayList data)
+            {
+                String content = "";
+                foreach (String keyValues in data)
+                {
+                    content += keyValues + "\r\n ";
+                }
+#if WINDOWS_10
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }, DispatcherPriority.Normal);
+#endif
+
+                this.txtDisplay.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.txtDisplay.Text = content;
+                }));
             }
         }
 
-        
+
         private static string[] TradeResultKey =
         {
             "formatID",
@@ -2141,8 +2480,153 @@ namespace QPOSDesktopDemo
             "PCI_firmwareVersion",
             "newPin",
             "encPAN",
-            "hashPan"
+            "hashPan",
+            "merchantId",
+            "vendorCode",
+            "deviceNumber",
+            "psamNo",
+            "csn",
+            "tmk0Status",
+            "tmk1Status",
+            "tmk2Status",
+            "tmk3Status",
+            "tmk4Status",
+            "macAddress",
+            "nfcID"
         };
+#endregion
+#region  search available device port
+        public void SearchDevice()
+        {
+            ManagementObjectCollection USBControllerDeviceCollection = new ManagementObjectSearcher("SELECT * FROM Win32_SerialPort").Get();
+            if (USBControllerDeviceCollection != null)
+            {
+                DeviceInfo.Clear();
+                foreach (ManagementObject USBControllerDevice in USBControllerDeviceCollection)
+                {
+                    //foreach (var property in USBControllerDevice.Properties)
+                    //{
+
+                    //        Console.WriteLine("property: " + property.Name + "       " + USBControllerDevice[property.Name] as String);
+                    //}
+                    String PNPDeviceID = USBControllerDevice["PNPDeviceID"] as String;
+                    String Device_type = PNPDeviceID.Substring(0, 3);
+                    if (Device_type == "USB")
+                    {
+                        Tip.d("PNPDeviceID: " + PNPDeviceID);
+                        String[] device_info = PNPDeviceID.Split('\\');
+                        String[] device_id = device_info[1].Split('&');
+                        
+                        if (device_id.Length == 3 && device_id[2] == "MI_00")
+                        {
+                            String com_port = USBControllerDevice["DeviceID"] as String;
+                            Tip.d("com_port: " + com_port);
+                            DeviceInfo.Add("Device_port", com_port);
+                            DeviceInfo.Add("Device_name", "DSPREAD MPOS");
+                            device.DeviceType = "USB DEVICE";
+                            device.Name = "DSPREAD MPOS";
+                            device.Port = com_port;
+                        }
+                    }
+
+
+                }
+            }
+        }
+        #endregion
+        #region
+        public static void CreateUSBWatcher()
+        {
+            Ports = System.IO.Ports.SerialPort.GetPortNames();
+            //create usb listener
+            ManagementScope scope = new ManagementScope("root\\CIMV2");
+            scope.Options.EnablePrivileges = true;
+            //create usb insert listener
+            try
+            {
+                WqlEventQuery USBInsertQuery = new WqlEventQuery("__InstanceCreationEvent", "TargetInstance ISA 'Win32_PnPEntity'");
+                USBInsertQuery.WithinInterval = new TimeSpan(0, 0, 2);
+                USBInsert = new ManagementEventWatcher(scope, USBInsertQuery);
+                USBInsert.EventArrived += OnDeviceConnected;
+                USBInsert.Start();
+            }
+            catch (Exception ex)
+            {
+                if (USBInsert != null)
+                {
+                    USBInsert.Stop();
+                }
+                throw ex;
+            }
+            //create usb remove listener
+            try
+            {
+                WqlEventQuery USBRemoveQuery = new WqlEventQuery("__InstanceDeletionEvent", "TargetInstance ISA 'Win32_PnPEntity'");
+                USBRemoveQuery.WithinInterval = new TimeSpan(0, 0, 2);
+                USBRemove = new ManagementEventWatcher(scope, USBRemoveQuery);
+                USBRemove.EventArrived += OnDeviceRemove;
+                USBRemove.Start();
+            }
+            catch (Exception ex)
+            {
+                if (USBRemove != null)
+                {
+                    USBRemove.Stop();
+                }
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// OnDeviceConnected
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnDeviceConnected(object sender, EventArrivedEventArgs e)
+        {
+            
+            string[] tempPorts = SerialPort.GetPortNames();
+            if (tempPorts.Count() == Ports.Count())
+            {
+                return;
+            }
+            else
+            {
+                Ports = tempPorts;
+                Tip.d("OnDeviceConnected");
+               
+            }
+            if (IsConnected)
+                return;
+            IsConnected = true;
+
+        }
+
+        /// <summary>
+        /// OnDeviceRemove
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnDeviceRemove(object sender, EventArrivedEventArgs e)
+        {
+            string[] tempPorts = SerialPort.GetPortNames();
+            if (tempPorts.Count() == Ports.Count())
+            {
+                return;
+            }
+            else
+            {
+                Ports = tempPorts;
+                Tip.d("OnDeviceRemove");
+                
+            }
+
+            if (!IsConnected)
+                return;
+
+            IsConnected = false;
+
+        }
         #endregion
     }
 }

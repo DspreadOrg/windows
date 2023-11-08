@@ -1,0 +1,14 @@
+image: mcr.microsoft.com/dotnet/sdk:6.0
+
+default:
+  before_script:
+    # - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" -n GitLab -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD --store-password-in-clear-text
+
+build_release:
+  stage: build
+  only:
+    - main
+  script:
+    - rm -rf *.Tests
+    - cd QPOSDesktopDemo_WithBLE/QPOSDesktopDemo
+    - dotnet build

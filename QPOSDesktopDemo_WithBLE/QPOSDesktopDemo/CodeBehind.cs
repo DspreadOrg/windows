@@ -2086,6 +2086,29 @@ namespace QPOSDesktopDemo
                     this.txtDisplay.Text = content;
                 }, DispatcherPriority.Normal);
             }
+
+            public void onReturnUpdateIPEKResult(bool isSuccess)
+            {
+                String result = "";
+                if (isSuccess)
+                {
+                    result = "Success";
+                }
+                else 
+                {
+                    result = "Fail";
+                }
+                Debug.WriteLine("result: " + result);
+                await this.txtDisplay.Dispatcher.InvokeAsync(() =>
+                {
+                    this.txtDisplay.Text = "result: " + result;
+                }, DispatcherPriority.Normal);
+            }
+
+            public void onGetKeyCheckValue(Dictionary<string, string> posInfoData)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         

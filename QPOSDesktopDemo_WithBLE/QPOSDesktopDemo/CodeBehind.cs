@@ -2087,7 +2087,7 @@ namespace QPOSDesktopDemo
                 }, DispatcherPriority.Normal);
             }
 
-            public void onReturnUpdateIPEKResult(bool isSuccess)
+           async public void onReturnUpdateIPEKResult(bool isSuccess)
             {
                 String result = "";
                 if (isSuccess)
